@@ -10,10 +10,10 @@
         <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 transform hover:scale-105 transition-all duration-300">
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div>
-              <h3 class="text-2xl font-semibold text-gray-800">Senior DevOps Engineer</h3>
-              <p class="text-gray-600">Tech Company Inc.</p>
+              <h3 class="text-2xl font-semibold text-gray-800">DevOps Engineer</h3>
+              <p class="text-gray-600">University of Exeter</p>
             </div>
-            <span class="text-gray-500 mt-2 md:mt-0">2021 - Present</span>
+            <span class="text-gray-500 mt-2 md:mt-0">Oct 2022 - Present</span>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -58,9 +58,9 @@
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div>
               <h3 class="text-2xl font-semibold text-gray-800">DevOps Engineer</h3>
-              <p class="text-gray-600">Digital Solutions Ltd.</p>
+              <p class="text-gray-600">Procadence Technologies Limited</p>
             </div>
-            <span class="text-gray-500 mt-2 md:mt-0">2019 - 2021</span>
+            <span class="text-gray-500 mt-2 md:mt-0">Apr 2021 - Sep 2022</span>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -104,10 +104,10 @@
         <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 transform hover:scale-105 transition-all duration-300">
           <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div>
-              <h3 class="text-2xl font-semibold text-gray-800">Cloud Operations Engineer</h3>
-              <p class="text-gray-600">Cloud Services Co.</p>
+              <h3 class="text-2xl font-semibold text-gray-800">DevOps Engineer Intern</h3>
+              <p class="text-gray-600">Procadence Technologies Limited</p>
             </div>
-            <span class="text-gray-500 mt-2 md:mt-0">2017 - 2019</span>
+            <span class="text-gray-500 mt-2 md:mt-0">Jun 2020 - Mar 2021</span>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

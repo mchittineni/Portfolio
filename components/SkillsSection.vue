@@ -16,9 +16,10 @@
           <h3 class="text-2xl font-semibold mb-4 text-gray-800">Cloud & Infrastructure</h3>
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div class="flex items-center space-x-2 group">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg" class="w-6 h-6 group-hover:scale-125 transition-transform" alt="AWS" />
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" class="w-6 h-6 group-hover:scale-125 transition-transform" alt="AWS" />
               <span class="text-sm text-gray-600">AWS</span>
             </div>
+            
             <div class="flex items-center space-x-2 group">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" class="w-6 h-6 group-hover:scale-125 transition-transform" alt="Azure" />
               <span class="text-sm text-gray-600">Azure</span>
@@ -124,7 +125,7 @@
           <h3 class="text-2xl font-semibold mb-4 text-gray-800">Monitoring & Security</h3>
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div class="flex items-center space-x-2 group">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/datadog/datadog-original.svg" class="w-6 h-6 group-hover:scale-125 transition-transform" alt="Datadog" />
+              <img src="https://www.vectorlogo.zone/logos/datadoghq/datadoghq-icon.svg" class="w-6 h-6 group-hover:scale-125 transition-transform" alt="Datadog" />
               <span class="text-sm text-gray-600">Datadog</span>
             </div>
             <div class="flex items-center space-x-2 group">
@@ -177,7 +178,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300">
             <div class="flex items-center space-x-3">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg" class="w-8 h-8" alt="AWS" />
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" class="w-8 h-8" alt="AWS" />
               <h4 class="font-semibold text-gray-800">AWS Certified Solutions Architect - Associate</h4>
             </div>
           </div>

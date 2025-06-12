@@ -20,8 +20,7 @@
           DevOps Engineer
         </h2>
         <p class="text-xl text-white/80 max-w-3xl mb-12">
-          A driven and proactive DevOps Engineer with over four years of experience in cloud services (AWS, Azure, GCP). 
-          Expert in CI/CD, infrastructure automation, and cloud architecture. Certified in AWS, Azure, and GCP platforms.
+          A driven and proactive DevOps Engineer with over four years of experience adept at deploying, managing, and enhancing a range of cloud services across Google Cloud, Amazon Web Services, and Azure platforms. Demonstrates a solid grasp of the software development life cycle and a keen enthusiasm for leveraging technology to foster innovation and ongoing enhancements. Recognized for the ability to architect, implement, and oversee cloud infrastructure through automation methodologies, enhancing operational efficiency, dependability, and scalability.
         </p>
         <div class="flex gap-4">
           <a href="#contact" class="btn-primary">

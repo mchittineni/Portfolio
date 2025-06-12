@@ -9,13 +9,13 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   app: {
     head: {
-      title: 'Manideep Chittineni - Full Stack Developer',
+      title: 'Manideep Chittineni - DevOps Engineer',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { 
           name: 'description', 
-          content: 'Full Stack Developer specializing in modern web technologies'
+          content: 'Specialized in enterprise-scale migrations and optimizing cloud infrastructure for maximum performance and cost efficiency.'
         }
       ],
       link: [

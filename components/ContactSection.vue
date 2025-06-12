@@ -67,8 +67,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <a href="mailto:your.email@example.com" class="text-gray-600 hover:text-purple-600 transition-colors duration-300">
-                your.email@example.com
+              <a href="mailto:manideep.chittineni@hotmail.com" class="text-gray-600 hover:text-purple-600 transition-colors duration-300">
+                manideep.chittineni@hotmail.com
               </a>
             </div>
 
@@ -79,7 +79,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              <span class="text-gray-600">Location, City, Country</span>
+              <span class="text-gray-600">Brockworth, Gloucester, United Kingdom</span>
             </div>
           </div>
 
