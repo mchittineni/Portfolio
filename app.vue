@@ -22,7 +22,7 @@
 
     <footer class="bg-gray-900 text-white py-8">
       <div class="container mx-auto px-6 text-center">
-        <p>&copy; 2024 Manideep Chittineni. All rights reserved.</p>
+        <p>&copy; 2025 Manideep Chittineni. All rights reserved.</p>
       </div>
     </footer>
   </div>
