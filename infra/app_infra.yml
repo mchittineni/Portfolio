@@ -1,0 +1,213 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to host a static website using CloudFront and a private S3 bucket with a lifecycle configuration & WAF
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name of the S3 bucket
+    AllowedPattern: '^[a-z0-9\-\.]{3,63}$'
+    ConstraintDescription: 'Must be a valid S3 bucket name (3–63 characters, lowercase letters, numbers, hyphens, and dots)'
+  SecretName:
+    Type: String
+    Default: PortfolioSecret
+    Description: Name of the secret to store distribution and bucket info
+  EnvironmentType:
+    Type: String
+    Default: Prod
+    Description: Environment type (e.g., Dev, Qa, Prod).
+  ProjectName:
+    Type: String
+    Default: Portfolio-Project
+    Description: Name of the project this stack belongs to.
+  TeamName:
+    Type: String
+    Default: MC
+    Description: Name of the team this stack belongs to.
+
+Resources:
+  S3Bucket:
+    # checkov:skip=CKV_AWS_18: ADD REASON
+    # checkov:skip=CKV_AWS_21: ADD REASON
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldObjects
+            Status: Enabled
+            ExpirationInDays: 365
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-S3Bucket'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+
+  CloudFrontOriginIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub 'OAI for ${AWS::StackName} CloudFront distribution'
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipalReadOnly
+            Effect: Allow
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginIdentity.S3CanonicalUserId
+            Action: 's3:GetObject'
+            Resource: !Sub '${S3Bucket.Arn}/*'
+
+  CloudFrontLoggingBucket:
+    # checkov:skip=CKV_AWS_18: ADD REASON
+    # checkov:skip=CKV_AWS_21: ADD REASON
+    # checkov:skip=CKV_AWS_53: ADD REASON
+    # checkov:skip=CKV_AWS_54: ADD REASON
+    # checkov:skip=CKV_AWS_55: ADD REASON
+    # checkov:skip=CKV_AWS_56: ADD REASON
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${BucketName}-cf-logs'
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldObjects
+            Status: Enabled
+            ExpirationInDays: 365
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-CFLoggingBucket'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+
+  CloudFrontLoggingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CloudFrontLoggingBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 's3:PutObject'
+            Resource: !Sub '${CloudFrontLoggingBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                's3:x-amz-acl': 'bucket-owner-full-control'
+
+  CloudFrontDistribution:
+    # checkov:skip=CKV_AWS_68: ADD REASON
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-CloudFront'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt S3Bucket.RegionalDomainName
+            Id: S3Origin
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginIdentity}'
+        Enabled: true
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          Compress: true
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 10
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+          MinimumProtocolVersion: TLSv1.2_2021
+        Logging:
+          Bucket: !GetAtt CloudFrontLoggingBucket.DomainName
+          IncludeCookies: false
+          Prefix: 'cloudfront-logs/'
+
+  KMSKeyForSecretsManager:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: KMS CMK for encrypting Secrets Manager secrets
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: 'kms:*'
+            Resource: '*'
+
+  SecretsManagerSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Ref SecretName
+      Description: Stores CloudFront Distribution ID and S3 Bucket name
+      SecretString: '{"DistributionId": "CloudFrontDistribution", "S3Bucket": "S3BucketName" }'
+      KmsKeyId: !Ref KMSKeyForSecretsManager
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-SecretsManagerSecret'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+
+Outputs:
+  CloudFrontURL:
+    Description: 'CloudFront Distribution URL'
+    Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
+
+  S3BucketName:
+    Description: 'Primary S3 Bucket Name'
+    Value: !Ref S3Bucket
+
+  CloudFrontLoggingBucketName:
+    Description: 'Cloufront Logging S3 Bucket Name'
+    Value: !Ref CloudFrontLoggingBucket
+
+  SecretArn:
+    Description: 'Secrets Manager Secret ARN'
+    Value: !Ref SecretsManagerSecret

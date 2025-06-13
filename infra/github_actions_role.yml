@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Github Action Role For App Deployments
+
+Parameters:
+  EnvironmentType:
+    Type: String
+    Default: Prod
+    Description: Environment type (e.g., Dev, Qa, Prod).
+  ProjectName:
+    Type: String
+    Default: Portfolio-Project
+    Description: Name of the project this stack belongs to.
+  TeamName:
+    Type: String
+    Default: MC
+    Description: Name of the team this stack belongs to.
+
+Resources:
+  # A role needed by Github
+  GithubActionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: github_actions_role
+      Description: A GitHub Actions for deploying the application.
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-IAMRole'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: arn:aws:iam::1111111111111:oidc-provider/token.actions.githubusercontent.com
+            Action: 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                'token.actions.githubusercontent.com:aud': sts.amazonaws.com
+              StringLike:
+                'token.actions.githubusercontent.com:sub': repo:abc/xyz:*
+
+Outputs:
+  IAMRoleArn:
+    Description: 'GitHub Actions IAM Role ARN'
+    Value: !Sub 'arn:aws:iam::${AWS::AccountId}:role/${GithubActionsRole}'
