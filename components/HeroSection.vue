@@ -22,18 +22,18 @@
         </div>
 
         <!-- Content -->
-        <div class="text-center lg:text-left">
+        <div class="text-2xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
           <h1 class="heading-1 mb-6">
             <span class="bg-gradient-to-r from-emerald-600 to-emerald-400 bg-clip-text text-transparent">
               Manideep Chittineni
             </span>
           </h1>
           <h2 class="text-2xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
-            Cloud & DevOps Engineer
+            Cloud & DevOps Architect
           </h2>
           <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl">
             Specializing in enterprise-scale migrations and cloud infrastructure optimization.
-            Transforming complex systems into efficient, scalable solutions.
+            Transforming complex systems into efficient, scalable, secure, cost-efficient, highly reliable solutions.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
             <a href="#contact" class="btn-emerald">
