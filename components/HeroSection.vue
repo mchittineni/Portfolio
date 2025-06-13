@@ -1,43 +1,72 @@
 <template>
-  <section class="hero min-h-screen relative overflow-hidden">
-    <!-- Background gradient -->
-    <div class="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-400 opacity-90"></div>
-    
+  <section id="hero" class="py-20 bg-gradient-to-br from-gray-50 to-gray-100"></section>
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
     <!-- Animated background shapes -->
-    <div class="absolute inset-0">
-      <div class="absolute top-0 -left-4 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div class="absolute top-0 -right-4 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div class="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200 dark:bg-emerald-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+      <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 dark:bg-emerald-700 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-400 dark:bg-emerald-600 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
     </div>
 
-    <!-- Content -->
-    <div class="container mx-auto px-6 py-24 relative z-10">
-      <div class="flex flex-col items-center justify-center text-center">
-        <h1 class="heading-1 text-white mb-6">
-          Manideep Chittineni
-        </h1>
-        <h2 class="heading-3 text-white/90 mb-8">
-          DevOps Engineer
-        </h2>
-        <p class="text-xl text-white/80 max-w-3xl mb-12 leading-relaxed">
-          A driven and proactive DevOps Engineer with over four years of experience adept at deploying, managing, and enhancing a range of cloud services across Google Cloud, Amazon Web Services, and Azure platforms. Demonstrates a solid grasp of the software development life cycle and a keen enthusiasm for leveraging technology to foster innovation and ongoing enhancements. Recognized for the ability to architect, implement, and oversee cloud infrastructure through automation methodologies, enhancing operational efficiency, dependability, and scalability.
-        </p>
-        <div class="flex gap-4">
-          <a href="#contact" class="btn-emerald">
-            Contact Me
-          </a>
-          <a href="#experience" class="px-8 py-4 bg-transparent border-2 border-white text-white rounded-md font-semibold hover:bg-white hover:text-emerald-600 transition-all duration-300 transform hover:scale-105">
-            View Experience
-          </a>
+    <div class="container mx-auto px-6 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Profile Image -->
+        <div class="flex justify-center lg:justify-end">
+          <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 border-emerald-500 shadow-lg">
+            <img
+              src="/profile.jpg"
+              alt="Profile"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="text-center lg:text-left">
+          <h1 class="heading-1 mb-6">
+            <span class="bg-gradient-to-r from-emerald-600 to-emerald-400 bg-clip-text text-transparent">
+              Manideep Chittineni
+            </span>
+          </h1>
+          <h2 class="text-2xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
+            Cloud & DevOps Engineer
+          </h2>
+          <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl">
+            Specializing in enterprise-scale migrations and cloud infrastructure optimization.
+            Transforming complex systems into efficient, scalable solutions.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <a href="#contact" class="btn-emerald">
+              Get in Touch
+            </a>
+            <a
+              href="/Manideep_Chittineni_Resume.pdf"
+              download
+              class="inline-flex items-center px-4 py-2 border border-emerald-600 text-sm font-medium rounded-md text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-colors duration-200"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download Resume
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </template>
 
-<style lang="postcss">
-.hero {
-  background-size: 400% 400%;
+<style scoped>
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
 
 @keyframes blob {
@@ -53,17 +82,5 @@
   100% {
     transform: translate(0px, 0px) scale(1);
   }
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
 }
 </style>
