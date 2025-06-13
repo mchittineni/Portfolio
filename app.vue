@@ -5,6 +5,7 @@
         <div class="flex items-center justify-between">
           <a href="#" class="text-2xl font-bold text-gray-800">MC</a>
           <div class="hidden md:flex space-x-8">
+            <a href="#hero" class="text-gray-600 hover:text-blue-600 transition-colors">About</a>
             <a href="#skills" class="text-gray-600 hover:text-blue-600 transition-colors">Skills</a>
             <a href="#experience" class="text-gray-600 hover:text-blue-600 transition-colors">Experience</a>
             <a href="#contact" class="text-gray-600 hover:text-blue-600 transition-colors">Contact</a>

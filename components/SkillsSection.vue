@@ -55,7 +55,7 @@
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-600">Kubernetes</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
-                <div class="w-26 h-2 bg-gray-700 rounded-full"></div>
+                <div class="h-2 bg-gray-700 rounded-full" style="width:104px"></div>
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-600">JUnit</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
-                <div class="w-26 h-2 bg-gray-700 rounded-full"></div>
+                <div class="w-[104px] h-2 bg-gray-700 rounded-full"></div>
               </div>
             </div>
             <div class="flex items-center justify-between">
@@ -151,7 +151,7 @@
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-600">Cloud Security</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
-                <div class="w-26 h-2 bg-gray-700 rounded-full"></div>
+                <div class="w-[104px] h-2 bg-gray-700 rounded-full"></div>
               </div>
             </div>
             <div class="flex items-center justify-between">
@@ -163,7 +163,7 @@
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-600">Compliance</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
-                <div class="w-26 h-2 bg-gray-700 rounded-full"></div>
+                <div class="w-[104px] h-2 bg-gray-700 rounded-full"></div>
               </div>
             </div>
           </div>
@@ -216,4 +216,4 @@
       </div>
     </div>
   </section>
-</template> 
+</template>
