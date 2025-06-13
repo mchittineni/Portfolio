@@ -48,7 +48,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            ${{ secrets.SECRETS_ARN }}
+            ${{ secrets.SECRETS_MANAGER_ARN }}
           parse-json-secrets: true
 
       - name: Initialize Node
