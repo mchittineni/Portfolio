@@ -117,7 +117,7 @@ Resources:
             Resource: !Sub '${CloudFrontLoggingBucket.Arn}/*'
             Condition:
               StringEquals:
-                "s3:x-amz-acl": "bucket-owner-full-control"
+                's3:x-amz-acl': 'bucket-owner-full-control'
 
   CloudFrontDistribution:
     # checkov:skip=CKV_AWS_68: ADD REASON
@@ -170,13 +170,13 @@ Resources:
       Description: KMS CMK for encrypting Secrets Manager secrets
       EnableKeyRotation: true
       KeyPolicy:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
               AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
-            Action: "kms:*"
-            Resource: "*"
+            Action: 'kms:*'
+            Resource: '*'
 
   SecretsManagerSecret:
     Type: AWS::SecretsManager::Secret

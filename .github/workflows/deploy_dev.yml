@@ -13,7 +13,7 @@ jobs:
   download:
     runs-on: ubuntu-latest
     permissions:
-  # checkov:skip=CKV2_GHA_1: ADD REASON
+      # checkov:skip=CKV2_GHA_1: ADD REASON
       id-token: write
       contents: read
       # These permissions are needed to interact with GitHub's OIDC Token endpoint.
