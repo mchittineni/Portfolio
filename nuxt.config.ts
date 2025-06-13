@@ -5,7 +5,9 @@ export default defineNuxtConfig({
     // prerender index route by default
     '/': { prerender: true },
   },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: [
+    '@nuxtjs/tailwindcss'
+  ],
   css: ['~/assets/css/main.css'],
   app: {
     head: {
