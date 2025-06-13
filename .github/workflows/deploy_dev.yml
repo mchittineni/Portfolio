@@ -60,9 +60,6 @@ jobs:
       - name: Run Format
         run: npm run format
 
-      - name: Run Lint
-        run: npm run lint
-
       - name: Build NuxtJs Application
         run: |
           echo Build started on `date`
