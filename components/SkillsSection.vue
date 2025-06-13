@@ -207,7 +207,7 @@
           Certifications
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <a href="https://aws.amazon.com/certification/certified-solutions-architect-associate/" target="_blank" rel="noopener noreferrer" 
+          <a href="https://www.credly.com/badges/5f18e335-13fb-4ccc-994d-ed8e422a0f3b/linked_in_profile" target="_blank" rel="noopener noreferrer" 
              class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300 block group">
             <div class="flex items-center space-x-4">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg" 
@@ -216,7 +216,7 @@
             </div>
           </a>
 
-          <a href="https://cloud.google.com/certification/cloud-engineer" target="_blank" rel="noopener noreferrer" 
+          <a href="https://www.credential.net/b488aa0d-d156-499c-91a0-4132f12a97a2?key=b37942efb1541e72a4a40381246efedb424c60c551fa2b7b7baff5573d77948a#acc.5B3UOSQI" target="_blank" rel="noopener noreferrer" 
              class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300 block group">
             <div class="flex items-center space-x-4">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg" 
@@ -225,7 +225,7 @@
             </div>
           </a>
 
-          <a href="https://learn.microsoft.com/en-us/certifications/azure-fundamentals/" target="_blank" rel="noopener noreferrer" 
+          <a href="https://www.credly.com/badges/5b2e93b4-470a-4d8c-b4b7-3c0cbd10cd6a?source=linked_in_profile" target="_blank" rel="noopener noreferrer" 
              class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300 block group">
             <div class="flex items-center space-x-4">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" 
@@ -234,7 +234,7 @@
             </div>
           </a>
 
-          <a href="https://learn.microsoft.com/en-us/certifications/azure-ai-fundamentals/" target="_blank" rel="noopener noreferrer" 
+          <a href="https://www.credly.com/badges/fda35ffe-a6ba-473a-b5ae-48aebba457d8?source=linked_in_profile" target="_blank" rel="noopener noreferrer" 
              class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300 block group">
             <div class="flex items-center space-x-4">
               <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" 
