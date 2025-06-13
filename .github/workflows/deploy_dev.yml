@@ -68,9 +68,10 @@ jobs:
 
       - name: Deploy NuxtJs Application
         run: |
-          aws s3 sync ./.output ${{ env.PORTFOLIOSECRET_S3BUCKET }}
+          aws s3 sync ./.output/public ${{ env.PORTFOLIOSECRET_S3BUCKET }}
+
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:
-          DISTRIBUTION: ${{ env.PORTFOLIOSECRET_DISTRIBUTION }}
+          DISTRIBUTION: ${{ env.PORTFOLIOSECRET_DISTRIBUTIONID }}
           PATHS: /*
