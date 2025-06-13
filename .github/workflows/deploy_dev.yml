@@ -42,7 +42,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ARN }}
-          aws-region: eu-west-2
+          aws-region: ${{ secrets.AWS_DEPLOY_REGION }}
 
       - name: Fetch AWS Secret from AWS Secrets Manager
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
