@@ -1,5 +1,5 @@
 <template>
-  <section id="hero" class="py-20 bg-gradient-to-br from-gray-50 to-gray-100"></section>
+  <section id="about" class="py-20 bg-gradient-to-br from-gray-50 to-gray-100"></section>
   <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
     <!-- Animated background shapes -->
     <div class="absolute inset-0 overflow-hidden">
