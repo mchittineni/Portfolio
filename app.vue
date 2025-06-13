@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between">
           <a href="#" class="text-2xl font-bold text-gray-800">MC</a>
           <div class="hidden md:flex space-x-8">
-            <a href="#hero" class="text-gray-600 hover:text-blue-600 transition-colors">About</a>
+            <a href="#about" class="text-gray-600 hover:text-blue-600 transition-colors">About</a>
             <a href="#skills" class="text-gray-600 hover:text-blue-600 transition-colors">Skills</a>
             <a href="#experience" class="text-gray-600 hover:text-blue-600 transition-colors">Experience</a>
             <a href="#contact" class="text-gray-600 hover:text-blue-600 transition-colors">Contact</a>
@@ -15,7 +15,7 @@
     </nav>
 
     <main>
-      <HeroSection />
+      <AboutSection />
       <SkillsSection />
       <ExperienceSection />
       <ContactSection />
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import HeroSection from '~/components/HeroSection.vue'
+import AboutSection from '~/components/AboutSection.vue'
 import SkillsSection from '~/components/SkillsSection.vue'
 import ExperienceSection from '~/components/ExperienceSection.vue'
 import ContactSection from '~/components/ContactSection.vue'
