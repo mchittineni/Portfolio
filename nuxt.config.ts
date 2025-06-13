@@ -6,8 +6,7 @@ export default defineNuxtConfig({
     '/': { prerender: true },
   },
   modules: [
-    '@nuxtjs/tailwindcss',
-    '@vercel/analytics/nuxt'
+    '@nuxtjs/tailwindcss'
   ],
   css: ['~/assets/css/main.css'],
   app: {
