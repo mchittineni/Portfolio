@@ -1,9 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  target: 'static', // ✅ Static generation mode  
+  nitro: {
+    preset: 'static' // ✅ Enable full static generation
+  },
   routeRules: {
-    // prerender index route by default
+    // prerender index route
     '/': { prerender: true },
+    // prerender all routes (optional: use crawler)
+    '/*': { prerender: true }
   },
   modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css'],
