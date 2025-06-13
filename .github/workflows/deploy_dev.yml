@@ -10,11 +10,11 @@ jobs:
   download:
     runs-on: ubuntu-latest
     permissions:
+  # checkov:skip=CKV2_GHA_1: ADD REASON
       id-token: write
       contents: read
-      packages: read
       # These permissions are needed to interact with GitHub's OIDC Token endpoint.
-    environment: dev
+    environment: Prod
 
     defaults:
       run:
@@ -68,10 +68,9 @@ jobs:
 
       - name: Deploy NuxtJs Application
         run: |
-          aws s3 sync ./.output s3://digital-upskill-dev-release
-
+          aws s3 sync ./.output ${{ env.PORTFOLIOSECRET_S3BUCKET }}
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:
-          DISTRIBUTION: ${{ env.DIGITAL_UPSKILL_DISTRIBUTION }}
+          DISTRIBUTION: ${{ env.PORTFOLIOSECRET_DISTRIBUTION }}
           PATHS: /*

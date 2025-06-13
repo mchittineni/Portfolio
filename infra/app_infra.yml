@@ -7,6 +7,10 @@ Parameters:
     Description: Name of the S3 bucket
     AllowedPattern: '^[a-z0-9\-\.]{3,63}$'
     ConstraintDescription: 'Must be a valid S3 bucket name (3–63 characters, lowercase letters, numbers, hyphens, and dots)'
+  SecretName:
+    Type: String
+    Default: PortfolioSecret
+    Description: Name of the secret to store distribution and bucket info
   EnvironmentType:
     Type: String
     Default: Prod
@@ -160,6 +164,37 @@ Resources:
           IncludeCookies: false
           Prefix: 'cloudfront-logs/'
 
+  KMSKeyForSecretsManager:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: KMS CMK for encrypting Secrets Manager secrets
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: "kms:*"
+            Resource: "*"
+
+  SecretsManagerSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Ref SecretName
+      Description: Stores CloudFront Distribution ID and S3 Bucket name
+      SecretString: '{"DistributionId": "CloudFrontDistribution", "S3Bucket": "S3BucketName" }'
+      KmsKeyId: !Ref KMSKeyForSecretsManager
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-SecretsManagerSecret'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+
 Outputs:
   CloudFrontURL:
     Description: 'CloudFront Distribution URL'
@@ -172,3 +207,7 @@ Outputs:
   CloudFrontLoggingBucketName:
     Description: 'Cloufront Logging S3 Bucket Name'
     Value: !Ref CloudFrontLoggingBucket
+
+  SecretArn:
+    Description: 'Secrets Manager Secret ARN'
+    Value: !Ref SecretsManagerSecret
