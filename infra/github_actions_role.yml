@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Github Action Role For App Deployments
+
+Resources:
+  # A role needed by Github
+  GithubActionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: github_actions_role
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: arn:aws:iam::111111111111:oidc-provider/token.actions.githubusercontent.com
+            Action: 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                'token.actions.githubusercontent.com:aud': sts.amazonaws.com
+              StringLike:
+                'token.actions.githubusercontent.com:sub': repo:abc/xyz:*
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'

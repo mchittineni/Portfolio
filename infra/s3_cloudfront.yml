@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to host a static website using CloudFront and a private S3 bucket with a lifecycle configuration
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name of the S3 bucket
+    AllowedPattern: '^[a-zA-Z0-9\-\.]{1,255}$'
+    ConstraintDescription: 'Must be a valid S3 bucket name (1-255 characters, alphanumeric, hyphen, or dot)'
+  EnvironmentType:
+    Type: String
+    Default: Dev
+    Description: Environment type (e.g., Dev, Qa, Prod).
+  ProjectName:
+    Type: String
+    Default: StaticWebsite
+    Description: Name of the project this stack belongs to.
+  TeamName:
+    Type: String
+    Default: DevOps-Digital
+    Description: Name of the team this stack belongs to.
+
+Resources:
+  S3Bucket:
+    # checkov:skip=CKV_AWS_18: ADD REASON
+    # checkov:skip=CKV_AWS_21: ADD REASON
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldObjects
+            Status: Enabled
+            ExpirationInDays: 3650
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-S3Bucket'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+
+  CloudFrontOriginIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub 'OAI for ${AWS::StackName} CloudFront distribution'
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipalReadOnly
+            Effect: Allow
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOriginIdentity.S3CanonicalUserId
+            Action: 's3:GetObject'
+            Resource: !Sub '${S3Bucket.Arn}/*'
+
+  CloudFrontLoggingBucket:
+    # checkov:skip=CKV_AWS_18: ADD REASON
+    # checkov:skip=CKV_AWS_21: ADD REASON
+    # checkov:skip=CKV_AWS_53: ADD REASON
+    # checkov:skip=CKV_AWS_54: ADD REASON
+    # checkov:skip=CKV_AWS_55: ADD REASON
+    # checkov:skip=CKV_AWS_56: ADD REASON
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: LogDeliveryWrite
+      BucketName: !Sub '${BucketName}-cf-logs'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-CFLoggingBucket'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+
+  CloudFrontWAFWebACL:
+    # checkov:skip=CKV_AWS_192: ADD REASON
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub '${AWS::StackName}-WebACL'
+      Scope: CLOUDFRONT
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub '${AWS::StackName}-webacl'
+      Rules: []
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-CloudFront'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt S3Bucket.RegionalDomainName
+            Id: S3Origin
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginIdentity}'
+        Enabled: true
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          Compress: true
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 10
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+          MinimumProtocolVersion: TLSv1.2_2021
+        Logging:
+          Bucket: !GetAtt CloudFrontLoggingBucket.DomainName
+          IncludeCookies: false
+          Prefix: 'cloudfront-logs/'
+        WebACLId: !GetAtt CloudFrontWAFWebACL.Arn
+
+Outputs:
+  CloudFrontURL:
+    Description: 'CloudFront Distribution URL'
+    Value: !Sub 'https://${CloudFrontDistribution.DomainName}'

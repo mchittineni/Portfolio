@@ -1,0 +1,77 @@
+name: Deploy Website
+
+on:
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+      # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    environment: dev
+
+    defaults:
+      run:
+        working-directory: ./
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ARN }}
+          aws-region: eu-west-2
+
+      - name: Fetch AWS Secret from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ${{ vars.SECRETS_ARN_UPSKILL }}
+          parse-json-secrets: true
+
+      - name: Initialize Node
+        run: npm install
+
+      - name: Update Packages
+        run: npm ci
+
+      - name: Run Format
+        run: npm run format
+
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Build NuxtJs Application
+        run: |
+          echo Build started on `date`
+          CI=false npm run build
+          echo Build completed on `date`
+
+      - name: Deploy NuxtJs Application
+        run: |
+          aws s3 sync ./.output s3://digital-upskill-dev-release
+
+      - name: Invalidate CloudFront
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ env.DIGITAL_UPSKILL_DISTRIBUTION }}
+          PATHS: /*

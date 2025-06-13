@@ -5,9 +5,7 @@ export default defineNuxtConfig({
     // prerender index route by default
     '/': { prerender: true },
   },
-  modules: [
-    '@nuxtjs/tailwindcss'
-  ],
+  modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/css/main.css'],
   app: {
     head: {
@@ -15,14 +13,13 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { 
-          name: 'description', 
-          content: 'Specialized in enterprise-scale migrations and optimizing cloud infrastructure for maximum performance and cost efficiency.'
-        }
+        {
+          name: 'description',
+          content:
+            'Specialized in enterprise-scale migrations and optimizing cloud infrastructure for maximum performance and cost efficiency.',
+        },
       ],
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-      ]
-    }
-  }
-});
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    },
+  },
+})
