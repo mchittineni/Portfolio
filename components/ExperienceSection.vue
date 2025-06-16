@@ -18,7 +18,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="bg-gray-50 p-4 rounded-xl text-center">
-              <div class="text-3xl font-bold text-indigo-600">40%</div>
+              <div class="text-3xl font-bold text-indigo-600">45%</div>
               <div class="text-sm text-gray-600">Cost Reduction</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-xl text-center">
@@ -40,16 +40,23 @@
                 <li>Serverless & event-driven architecture using Lambda, EventBridge, AppSync</li>
                 <li>Networking: VPC, Route53, Load Balancing, ACM</li>
                 <li>Content delivery via CloudFront, DNS with Route 53</li>
+                <li>Optimized cloud resources resulting in 45% cost savings</li>
+                <li>Implemented disaster recovery solutions improving system resilience</li>
+                <li>Managed Kubernetes clusters using EKS, Fargate for container orchestration</li>
               </ul>
             </div>
+
             <div>
               <h4 class="font-semibold text-gray-800 mb-2">Security & Automation</h4>
               <ul class="list-disc list-inside space-y-1">
                 <li>Security: IAM, Secrets Manager, AWS WAF, KMS, Cognito, AWS Config</li>
                 <li>CI/CD: CodePipeline, CodeBuild, CodeDeploy, GitHub Actions</li>
+                <li>Containerization: ECS, EKS, Fargate, Docker</li>
+                <li>Implemented IaC using Terraform, reducing deployment time by 60%</li>
                 <li>Monitoring: CloudWatch, Systems Manager, CloudTrail, Cost Explorer</li>
                 <li>Governance: Control Tower, Resource Explorer, Well-Architected Framework</li>
                 <li>Code Quality: SonarCloud, Linter, OIDC integration</li>
+                <li>Managed Kubernetes clusters supporting 100+ microservices with 99.9% uptime</li>
               </ul>
             </div>
           </div>
@@ -77,18 +84,36 @@
               <div class="text-sm text-gray-600">Faster Response</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-xl text-center">
-              <div class="text-3xl font-bold text-blue-600">30%</div>
+              <div class="text-3xl font-bold text-blue-600">40%</div>
               <div class="text-sm text-gray-600">Cost Savings</div>
             </div>
           </div>
 
-          <ul class="space-y-2 text-gray-600">
-            <li>Managed CI/CD pipelines on GCP using Cloud Build, Jenkins, Travis CI</li>
-            <li>Deployed scalable apps on GKE with Docker orchestration</li>
-            <li>Implemented IaC via Deployment Manager for infra consistency</li>
-            <li>Monitored apps using Stackdriver, enhanced security with IAM & network policies</li>
-            <li>Promoted DevOps culture, collaborating closely with dev teams</li>
-          </ul>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 text-sm">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">Cloud & Infrastructure (GCP)</h4>
+              <ul class="list-disc list-inside space-y-1">
+                <li>Multi-tier architecture design using Compute Engine, VPC, Cloud Functions</li>
+                <li>Infrastructure as Code with Deployment Manager, Terraform, Pulumi</li>
+                <li>
+                  Serverless & event-driven architecture using Cloud Functions, Pub/Sub, Cloud Run
+                </li>
+                <li>Automated infra provisioning using Ansible, achieving 85% automation rate</li>
+                <li>Optimized cloud resources resulting in 40% cost savings</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">Security & Automation</h4>
+              <ul class="list-disc list-inside space-y-1">
+                <li>Security: IAM, Secret Manager, Cloud Armor, Cloud KMS, Identity-Aware Proxy</li>
+                <li>CI/CD: Implemented CI/CD pipelines reducing deployment time by 50%</li>
+                <li>Monitoring: Cloud Monitoring, Cloud Logging, Cloud Trace, Cost Management</li>
+                <li>Governance: Organization Policies, Resource Manager, Assured Workloads</li>
+                <li>Code Quality: SonarCloud, ESLint, OIDC integration with GitHub/GitLab</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <!-- Cloud Engineer -->
@@ -118,12 +143,34 @@
             </div>
           </div>
 
-          <ul class="space-y-2 text-gray-600">
-            <li>Supported CI/CD with Azure DevOps, Jenkins, and Travis CI</li>
-            <li>Contributed to ARM-based IaC and Azure environment provisioning</li>
-            <li>Monitored performance via Azure Monitor, App Insights</li>
-            <li>Documented infrastructure and best practices using Confluence</li>
-          </ul>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 text-sm">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">Cloud & Infrastructure (Azure)</h4>
+              <ul class="list-disc list-inside space-y-1">
+                <li>Managed cloud infrastructure across Azure with 99.9% uptime</li>
+                <li>
+                  Multi-tier architecture design using Virtual Machines, Azure Functions, Blob
+                  Storage
+                </li>
+                <li>Implemented disaster recovery solutions reducing recovery time by 75%</li>
+                <li>Infrastructure as Code with ARM templates, Bicep, Terraform, Pulumi</li>
+                <li>Automated routine tasks improving operational efficiency by 45%</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">Security & Automation</h4>
+              <ul class="list-disc list-inside space-y-1">
+                <li>Security: Azure AD, Key Vault, Azure Firewall, Role-Based Access Control</li>
+                <li>CI/CD: Azure DevOps, GitHub Actions, Pipelines with YAML</li>
+                <li>
+                  Monitoring: Azure Monitor, Log Analytics, Application Insights, Cost Management
+                </li>
+                <li>Governance: Azure Policy, Blueprints, Management Groups, Resource Graph</li>
+                <li>Code Quality: SonarCloud, ESLint, OIDC integration with Azure AD/GitHub</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
