@@ -476,28 +476,28 @@
           <h3 class="text-2xl font-semibold mb-6 text-gray-800">Additional Skills</h3>
           <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-600">Git</span>
+              <span class="text-sm font-medium text-gray-600">Chef</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
                 <div class="w-28 h-2 bg-indigo-600 rounded-full"></div>
               </div>
             </div>
 
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-600">SonarQube</span>
+              <span class="text-sm font-medium text-gray-600">Puppet</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
                 <div class="w-24 h-2 bg-indigo-600 rounded-full"></div>
               </div>
             </div>
 
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-600">JUnit</span>
+              <span class="text-sm font-medium text-gray-600">Snyk</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
                 <div class="w-[104px] h-2 bg-indigo-600 rounded-full"></div>
               </div>
             </div>
 
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-600">Maven</span>
+              <span class="text-sm font-medium text-gray-600">SonarQube</span>
               <div class="w-32 h-2 bg-gray-100 rounded-full">
                 <div class="w-24 h-2 bg-indigo-600 rounded-full"></div>
               </div>
@@ -524,6 +524,42 @@
               />
               <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
                 AWS Certified Solutions Architect – Associate
+              </h4>
+            </div>
+          </a>
+
+           <a
+            href="https://www.credly.com/org/amazon-web-services/badge/aws-certified-developer-associate"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300 block group"
+          >
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg"
+                class="w-10 h-10 group-hover:scale-110 transition-transform"
+                alt="AWS"
+              />
+              <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                AWS Certified Developer – Associate
+              </h4>
+            </div>
+          </a>
+
+           <a
+            href="https://www.credly.com/org/amazon-web-services/badge/aws-certified-ai-practitioner"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300 block group"
+          >
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg"
+                class="w-10 h-10 group-hover:scale-110 transition-transform"
+                alt="AWS"
+              />
+              <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                AWS Certified AI Practitioner
               </h4>
             </div>
           </a>
@@ -614,6 +650,25 @@
               />
               <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
                 Oracle Cloud Infrastructure Architect
+              </h4>
+            </div>
+          </a>
+
+          <a
+            href="https://developer.hashicorp.com/certifications/infrastructure-automation"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:scale-105 transition-all duration-300 block group"
+          >
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original-wordmark.svg"
+          
+                class="w-10 h-10 group-hover:scale-110 transition-transform"
+                alt="Terraform"
+              />
+              <h4 class="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                HashiCorp Certified Terraform Associate
               </h4>
             </div>
           </a>
