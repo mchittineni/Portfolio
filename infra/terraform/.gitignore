@@ -1,0 +1,17 @@
+# Local Terraform state & provider cache
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Variable files may contain account-specific values — keep only the example
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Keep .terraform.lock.hcl committed (do NOT ignore it)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

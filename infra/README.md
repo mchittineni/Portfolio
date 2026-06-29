@@ -1,5 +1,10 @@
 # Infrastructure
 
+> **Two equivalent implementations live here.** This guide covers the
+> **CloudFormation** templates. A functionally-equivalent **Terraform** version
+> is in [`terraform/`](terraform/) — use whichever you prefer, but adopt only
+> one as the source of truth (don't apply both to the same account/resources).
+
 CloudFormation templates that host the portfolio on AWS and grant CI a
 least-privilege deploy role. Two independent stacks:
 

@@ -3,4 +3,9 @@
 dist
 node_modules
 .git
-.DS_Store 
+.DS_Store
+
+# Terraform provider cache & state
+**/.terraform
+*.tfstate
+*.tfstate.* 

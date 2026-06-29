@@ -52,7 +52,7 @@ and a responsive nav with a mobile menu.
 | Hosting       | Private **S3** bucket (origin) behind **CloudFront** (Origin Access Control)                                              |
 | Edge security | **AWS WAFv2**, TLS 1.2+, security response headers, KMS-encrypted secret                                                  |
 | CI/CD         | **GitHub Actions** with OIDC (no long-lived AWS keys)                                                                     |
-| IaC           | **CloudFormation** (see [`infra/`](infra/) and [`infra/README.md`](infra/README.md))                                      |
+| IaC           | **CloudFormation** _or_ **Terraform** (equivalent; see [`infra/`](infra/))                                                |
 | Tooling       | Prettier, PostCSS, Autoprefixer                                                                                           |
 
 ## Architecture
@@ -92,7 +92,8 @@ details — parameters, deploy order, and security posture — are in
 ├── plugins/
 │   └── reveal.client.ts        # IntersectionObserver scroll-reveal (client-only)
 ├── public/                     # Served as-is: profile.jpg, resume PDF, robots.txt, favicon
-├── infra/                      # CloudFormation templates (see infra/README.md)
+├── infra/                      # IaC: CloudFormation (*.yml) + Terraform (terraform/)
+├── wrangler.toml               # Cloudflare Workers Static Assets config (alt hosting)
 └── .github/workflows/
     └── deploy_prod.yml         # Manual (workflow_dispatch) deploy to AWS
 ```
@@ -155,6 +156,11 @@ under `public/`.
 
 ## Deployment
 
+Two independent hosting paths are configured — use whichever you prefer (don't
+run both against the same domain).
+
+### AWS — S3 + CloudFront (primary)
+
 Deployment is a manual **`workflow_dispatch`** run of
 [`.github/workflows/deploy_prod.yml`](.github/workflows/deploy_prod.yml). The
 job authenticates to AWS via GitHub OIDC (no stored keys), reads the target
@@ -175,6 +181,36 @@ it, and the IAM trust policy is scoped to `environment:Prod` by default).
 
 ➡️ **Infrastructure provisioning, stack parameters, deploy order, and the
 security model are documented in [`infra/README.md`](infra/README.md).**
+
+### Cloudflare (Workers Static Assets)
+
+The site can also be hosted on **Cloudflare** via [`wrangler.toml`](wrangler.toml),
+which configures an **assets-only Worker** (Workers Static Assets) that serves the
+prerendered output (`.output/public`) directly — no server code. This is the modern
+replacement for legacy "Workers Sites", so it avoids the
+`No such module "__STATIC_CONTENT_MANIFEST"` error, and it works with the
+`wrangler deploy` / `wrangler versions upload` commands a Cloudflare Build runs.
+Security headers come from [`public/_headers`](public/_headers); unknown paths
+serve the prerendered `404.html` (`not_found_handling = "404-page"`).
+
+The Cloudflare Workers Build is configured as:
+
+| Setting         | Value                                     |
+| --------------- | ----------------------------------------- |
+| Build command   | `npm run build` _(or `npm run generate`)_ |
+| Deploy command  | `npx wrangler deploy` (production)        |
+| Version command | `npx wrangler versions upload` (previews) |
+| Root directory  | `/`                                       |
+
+Both `npm run build` and `npm run generate` emit the static `.output/public` here,
+because `nuxt.config.ts` sets the Nitro `static` preset — `generate` is the more
+robust choice as it always forces static output. Deploy via the Git integration, or
+manually:
+
+```bash
+npm run build
+npx wrangler deploy          # or: npx wrangler versions upload
+```
 
 ## Accessibility, SEO & performance
 
