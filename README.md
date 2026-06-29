@@ -193,12 +193,22 @@ replacement for legacy "Workers Sites", so it avoids the
 Security headers come from [`public/_headers`](public/_headers); unknown paths
 serve the prerendered `404.html` (`not_found_handling = "404-page"`).
 
-Set the project's **build command** to `npm run generate` (the output directory is
-wired via `[assets] directory` in `wrangler.toml`). Deploy via the Git integration,
-or manually:
+The Cloudflare Workers Build is configured as:
+
+| Setting         | Value                                     |
+| --------------- | ----------------------------------------- |
+| Build command   | `npm run build` _(or `npm run generate`)_ |
+| Deploy command  | `npx wrangler deploy` (production)        |
+| Version command | `npx wrangler versions upload` (previews) |
+| Root directory  | `/`                                       |
+
+Both `npm run build` and `npm run generate` emit the static `.output/public` here,
+because `nuxt.config.ts` sets the Nitro `static` preset — `generate` is the more
+robust choice as it always forces static output. Deploy via the Git integration, or
+manually:
 
 ```bash
-npm run generate
+npm run build
 npx wrangler deploy          # or: npx wrangler versions upload
 ```
 

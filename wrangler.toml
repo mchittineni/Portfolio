@@ -6,7 +6,8 @@
 # `No such module "__STATIC_CONTENT_MANIFEST"` error — and it works with the
 # `wrangler versions upload` / `wrangler deploy` commands a Workers Build runs.
 #
-# Build command (Cloudflare dashboard → Build configuration): npm run generate
+# Build command (Cloudflare dashboard → Build configuration): npm run build
+# (or `npm run generate`; both emit static `.output/public` with the static preset).
 name               = "web-portfolio"
 compatibility_date = "2026-06-01"
 
