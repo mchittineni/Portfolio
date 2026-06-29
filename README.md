@@ -52,7 +52,7 @@ and a responsive nav with a mobile menu.
 | Hosting       | Private **S3** bucket (origin) behind **CloudFront** (Origin Access Control)                                              |
 | Edge security | **AWS WAFv2**, TLS 1.2+, security response headers, KMS-encrypted secret                                                  |
 | CI/CD         | **GitHub Actions** with OIDC (no long-lived AWS keys)                                                                     |
-| IaC           | **CloudFormation** (see [`infra/`](infra/) and [`infra/README.md`](infra/README.md))                                      |
+| IaC           | **CloudFormation** _or_ **Terraform** (equivalent; see [`infra/`](infra/))                                                |
 | Tooling       | Prettier, PostCSS, Autoprefixer                                                                                           |
 
 ## Architecture
@@ -92,7 +92,8 @@ details — parameters, deploy order, and security posture — are in
 ├── plugins/
 │   └── reveal.client.ts        # IntersectionObserver scroll-reveal (client-only)
 ├── public/                     # Served as-is: profile.jpg, resume PDF, robots.txt, favicon
-├── infra/                      # CloudFormation templates (see infra/README.md)
+├── infra/                      # IaC: CloudFormation (*.yml) + Terraform (terraform/)
+├── wrangler.toml               # Cloudflare Pages config (alternative hosting)
 └── .github/workflows/
     └── deploy_prod.yml         # Manual (workflow_dispatch) deploy to AWS
 ```
@@ -155,6 +156,11 @@ under `public/`.
 
 ## Deployment
 
+Two independent hosting paths are configured — use whichever you prefer (don't
+run both against the same domain).
+
+### AWS — S3 + CloudFront (primary)
+
 Deployment is a manual **`workflow_dispatch`** run of
 [`.github/workflows/deploy_prod.yml`](.github/workflows/deploy_prod.yml). The
 job authenticates to AWS via GitHub OIDC (no stored keys), reads the target
@@ -175,6 +181,34 @@ it, and the IAM trust policy is scoped to `environment:Prod` by default).
 
 ➡️ **Infrastructure provisioning, stack parameters, deploy order, and the
 security model are documented in [`infra/README.md`](infra/README.md).**
+
+### Cloudflare Pages (alternative)
+
+The site can also be hosted on **Cloudflare Pages**, configured by
+[`wrangler.toml`](wrangler.toml) (`pages_build_output_dir = ".output/public"`)
+with security headers in [`public/_headers`](public/_headers). Because Pages
+serves the **prerendered static output directly — with no Worker** — it avoids
+the legacy Workers Sites error `No such module "__STATIC_CONTENT_MANIFEST"`.
+
+Set the project's build configuration to:
+
+| Setting                | Value              |
+| ---------------------- | ------------------ |
+| Framework preset       | Nuxt _(or None)_   |
+| Build command          | `npm run generate` |
+| Build output directory | `.output/public`   |
+
+Then deploy via the Git integration, or manually:
+
+```bash
+npm run generate
+npx wrangler pages deploy        # uses pages_build_output_dir from wrangler.toml
+```
+
+> If an existing Cloudflare **Workers** project is deploying this repo with
+> `wrangler deploy` (the source of the `__STATIC_CONTENT_MANIFEST` failure),
+> point it at a **Pages** project with the settings above instead — a static
+> Nuxt site needs no Worker.
 
 ## Accessibility, SEO & performance
 

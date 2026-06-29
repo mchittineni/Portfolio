@@ -1,0 +1,13 @@
+# Cloudflare Pages headers (https://developers.cloudflare.com/pages/configuration/headers/).
+# Mirrors the security headers the AWS CloudFront response-headers policy applies,
+# so both hosting paths behave the same. Copied verbatim into the build output.
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Hashed, immutable build assets — cache aggressively.
+/_nuxt/*
+  Cache-Control: public, max-age=31536000, immutable

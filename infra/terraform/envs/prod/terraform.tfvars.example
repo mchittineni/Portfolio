@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars and fill in.
+bucket_name = "my-portfolio-prod"
+github_org  = "mchittineni"
+github_repo = "Portfolio"
+
+# Optional custom domain (both required together; ACM cert must be in us-east-1):
+# domain_name         = "www.example.com"
+# acm_certificate_arn = "arn:aws:acm:us-east-1:111111111111:certificate/xxxxxxxx"

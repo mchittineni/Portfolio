@@ -1,0 +1,13 @@
+# Cloudflare Pages configuration for the statically-generated Nuxt site.
+#
+# This deploys the prerendered static output (`.output/public`) directly as a
+# Pages project — there is NO Worker, which is what avoids the legacy
+# Workers Sites error: `No such module "__STATIC_CONTENT_MANIFEST"`.
+#
+# Build settings (Cloudflare dashboard → the project's Build configuration,
+# or `wrangler pages deploy`):
+#   Build command:            npm run generate
+#   Build output directory:   .output/public
+name                   = "web-portfolio"
+compatibility_date     = "2026-06-01"
+pages_build_output_dir = ".output/public"
