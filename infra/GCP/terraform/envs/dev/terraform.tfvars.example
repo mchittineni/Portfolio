@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars and fill in.
+project_id  = "my-gcp-project"
+bucket_name = "my-portfolio-dev"
+github_org  = "mchittineni"
+github_repo = "Portfolio"
+
+# region   = "us-central1"
+# location = "US"

@@ -5,8 +5,8 @@
         <p class="eyebrow">What I work with</p>
         <h2 class="section-title">Technical <span class="text-gradient">Skills</span></h2>
         <p class="section-sub">
-          A toolbox spanning multi-cloud platforms, infrastructure-as-code, and the full DevOps
-          lifecycle.
+          A toolbox spanning multi-cloud platforms, infrastructure-as-code, the full DevOps
+          lifecycle, and production GenAI engineering.
         </p>
       </header>
 
@@ -95,6 +95,55 @@
           <h4 class="cert__title">{{ cert.title }}</h4>
         </a>
       </div>
+
+      <p class="certs-note" data-reveal>
+        <strong>AI &amp; GenAI:</strong>
+        <a
+          href="https://verify.skilljar.com/c/r4k36wahspip"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Building Applications with the Claude API</a
+        >
+        ·
+        <a
+          href="https://verify.skilljar.com/c/wcqfxigi33xe"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Claude on Amazon Bedrock</a
+        >
+        ·
+        <a
+          href="https://verify.skilljar.com/c/set5z48k4io8"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Google Cloud Vertex AI</a
+        >
+        · Model Context Protocol (MCP) · OpenAI Agents &amp; Workflows
+      </p>
+
+      <p class="certs-note" data-reveal>
+        <strong>AWS Demonstrated:</strong>
+        <a
+          href="https://www.credly.com/badges/7dc752e5-43ae-4ee7-bbfd-33631e412f16/linked_in_profile"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Application Networking</a
+        >
+        ·
+        <a
+          href="https://www.credly.com/badges/77b46116-d903-49b5-8e2c-e13a9f47472c/linked_in_profile"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Incident Response</a
+        >
+        ·
+        <a
+          href="https://www.credly.com/badges/20201dc6-9611-4c9f-8e38-43f448cca8c9"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Serverless</a
+        >
+      </p>
     </div>
   </section>
 </template>
@@ -102,7 +151,7 @@
 <script setup>
   const categories = [
     {
-      title: 'Programming Languages',
+      title: 'Languages',
       icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
       items: [
         {
@@ -111,9 +160,9 @@
           img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
         },
         {
-          name: 'Java',
-          href: 'https://www.java.com/',
-          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',
+          name: 'TypeScript',
+          href: 'https://www.typescriptlang.org/',
+          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',
         },
         {
           name: 'JavaScript',
@@ -121,14 +170,14 @@
           img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
         },
         {
-          name: 'TypeScript',
-          href: 'https://www.typescriptlang.org/',
-          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',
+          name: 'Bash',
+          href: 'https://www.gnu.org/software/bash/',
+          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bash/bash-original.svg',
         },
       ],
     },
     {
-      title: 'Cloud & Infrastructure',
+      title: 'Cloud Platforms',
       icon: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z',
       items: [
         {
@@ -154,7 +203,7 @@
       ],
     },
     {
-      title: 'DevOps Tools',
+      title: 'Containers & IaC',
       icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
       items: [
         {
@@ -173,9 +222,9 @@
           img: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg',
         },
         {
-          name: 'Ansible',
-          href: 'https://www.ansible.com/',
-          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg',
+          name: 'Pulumi',
+          href: 'https://www.pulumi.com/',
+          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pulumi/pulumi-original.svg',
         },
       ],
     },
@@ -184,14 +233,14 @@
       icon: 'M13 10V3L4 14h7v7l9-11h-7z',
       items: [
         {
+          name: 'GitHub Actions',
+          href: 'https://github.com/features/actions',
+          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',
+        },
+        {
           name: 'Jenkins',
           href: 'https://www.jenkins.io/',
           img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg',
-        },
-        {
-          name: 'GitHub',
-          href: 'https://github.com/',
-          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',
         },
         {
           name: 'GitLab',
@@ -199,14 +248,14 @@
           img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg',
         },
         {
-          name: 'Bitbucket',
-          href: 'https://bitbucket.org/',
-          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bitbucket/bitbucket-original.svg',
+          name: 'Ansible',
+          href: 'https://www.ansible.com/',
+          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg',
         },
       ],
     },
     {
-      title: 'Monitoring & Security',
+      title: 'Observability & Security',
       icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
       items: [
         {
@@ -231,18 +280,44 @@
         },
       ],
     },
+    {
+      title: 'Data & AI',
+      icon: 'M4 7v10c0 1.66 3.58 3 8 3s8-1.34 8-3V7M4 7c0 1.66 3.58 3 8 3s8-1.34 8-3M4 7c0-1.66 3.58-3 8-3s8 1.34 8 3m0 5c0 1.66-3.58 3-8 3s-8-1.34-8-3',
+      items: [
+        {
+          name: 'Databricks',
+          href: 'https://www.databricks.com/',
+          img: 'https://www.vectorlogo.zone/logos/databricks/databricks-icon.svg',
+        },
+        {
+          name: 'Snowflake',
+          href: 'https://www.snowflake.com/',
+          img: 'https://www.vectorlogo.zone/logos/snowflake/snowflake-icon.svg',
+        },
+        {
+          name: 'Bedrock',
+          href: 'https://aws.amazon.com/bedrock/',
+          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg',
+        },
+        {
+          name: 'Vertex AI',
+          href: 'https://cloud.google.com/vertex-ai',
+          img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg',
+        },
+      ],
+    },
   ]
 
   const proficiency = [
-    { name: 'Git', level: 88 },
-    { name: 'SonarQube', level: 75 },
-    { name: 'JUnit', level: 81 },
-    { name: 'Maven', level: 75 },
+    { name: 'Terraform / IaC', level: 95 },
+    { name: 'Kubernetes', level: 88 },
+    { name: 'CI/CD & GitOps', level: 92 },
+    { name: 'GenAI & MCP', level: 85 },
   ]
 
   const certifications = [
     {
-      title: 'AWS Certified Solutions Architect – Associate',
+      title: 'AWS Solutions Architect – Associate',
       alt: 'AWS',
       href: 'https://www.credly.com/badges/5f18e335-13fb-4ccc-994d-ed8e422a0f3b/linked_in_profile',
       img: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg',
@@ -260,22 +335,46 @@
       img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg',
     },
     {
+      title: 'OCI Developer – Associate',
+      alt: 'Oracle',
+      href: 'https://education.oracle.com/oracle-cloud-infrastructure-developer-2025-associate/pexam_1Z0-1084-25',
+      img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg',
+    },
+    {
+      title: 'OCI Architect – Associate',
+      alt: 'Oracle',
+      href: 'https://education.oracle.com/oracle-cloud-infrastructure-2025-architect-associate/pexam_1Z0-1072-25',
+      img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg',
+    },
+    {
+      title: 'HashiCorp Terraform – Associate',
+      alt: 'Terraform',
+      href: 'https://www.hashicorp.com/certification/terraform-associate',
+      img: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg',
+    },
+    {
+      title: 'Databricks Fundamentals',
+      alt: 'Databricks',
+      href: 'https://credentials.databricks.com/cd05f977-4ea2-420c-9b16-c35ee7014ba7',
+      img: 'https://www.vectorlogo.zone/logos/databricks/databricks-icon.svg',
+    },
+    {
       title: 'Microsoft Azure AI Fundamentals – AI-900',
       alt: 'Azure AI',
       href: 'https://www.credly.com/badges/fda35ffe-a6ba-473a-b5ae-48aebba457d8?source=linked_in_profile',
       img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg',
     },
     {
-      title: 'Oracle Cloud Infrastructure Developer',
-      alt: 'Oracle',
-      href: 'https://education.oracle.com/oracle-cloud-infrastructure-developer-2025-associate/pexam_1Z0-1084-25',
-      img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg',
+      title: 'AWS Certified AI Practitioner',
+      alt: 'AWS',
+      href: 'https://aws.amazon.com/certification/certified-ai-practitioner/',
+      img: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg',
     },
     {
-      title: 'Oracle Cloud Infrastructure Architect',
-      alt: 'Oracle',
-      href: 'https://education.oracle.com/oracle-cloud-infrastructure-2025-architect-associate/pexam_1Z0-1072-25',
-      img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg',
+      title: 'Databricks Generative AI Fundamentals',
+      alt: 'Databricks',
+      href: 'https://credentials.databricks.com/ca9b7009-20d4-4978-80da-40171a158536',
+      img: 'https://www.vectorlogo.zone/logos/databricks/databricks-icon.svg',
     },
   ]
 </script>
@@ -409,6 +508,26 @@
     transition: color 0.2s ease;
   }
   .cert:hover .cert__title {
+    color: var(--accent);
+  }
+
+  .certs-note {
+    margin: 1.5rem auto 0;
+    max-width: 56rem;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .certs-note strong {
+    color: var(--text-soft);
+  }
+  .certs-note a {
+    color: var(--text-soft);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .certs-note a:hover {
     color: var(--accent);
   }
 </style>

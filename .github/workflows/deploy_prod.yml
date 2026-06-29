@@ -2,44 +2,44 @@ name: Deploy Website (Prod)
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy_aws:
+        description: 'Deploy to AWS (S3 + CloudFront)'
+        type: boolean
+        default: true
+      deploy_azure:
+        description: 'Deploy to Azure (Storage + Front Door)'
+        type: boolean
+        default: false
+      deploy_gcp:
+        description: 'Deploy to GCP (Cloud Storage + Cloud CDN)'
+        type: boolean
+        default: false
 
-# Serialize deploys so two dispatches can't interleave an `s3 sync --delete`.
+# Serialize deploys so two dispatches can't interleave a destructive sync.
 concurrency:
   group: deploy-prod
   cancel-in-progress: false
 
+# Default-deny: read-only at the top level; each deploy job adds OIDC token minting.
 permissions:
-  id-token: write # required for the GitHub OIDC -> AWS role assumption
   contents: read
 
 jobs:
-  deploy:
+  # Build once, then fan out the same artifact to every selected cloud.
+  build:
+    name: Build static site
     runs-on: ubuntu-latest
-    environment: Prod
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: 22.x
           cache: 'npm'
           cache-dependency-path: package-lock.json
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ARN }}
-          aws-region: ${{ secrets.AWS_DEPLOY_REGION }}
-
-      - name: Fetch AWS Secret from AWS Secrets Manager
-        uses: aws-actions/aws-secretsmanager-get-secrets@v3
-        with:
-          secret-ids: |
-            ${{ secrets.SECRETS_MANAGER_ARN }}
-          parse-json-secrets: true
 
       - name: Install dependencies
         run: npm ci
@@ -48,17 +48,150 @@ jobs:
         run: npm run format:check
 
       - name: Build Nuxt application
-        run: |
-          echo "Build started on $(date)"
-          npm run generate
-          echo "Build completed on $(date)"
+        run: npm run generate
 
-      - name: Deploy to S3
-        run: |
-          aws s3 sync ./.output/public "s3://${PORTFOLIOSECRET_S3BUCKET}" --delete
+      - name: Upload build artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site
+          path: .output/public
+          retention-days: 1
+          if-no-files-found: error
+
+  # -------------------------------------------------------------------------
+  # AWS — S3 + CloudFront (reads bucket/distribution from Secrets Manager)
+  # -------------------------------------------------------------------------
+  deploy-aws:
+    name: Deploy to AWS
+    needs: build
+    if: ${{ inputs.deploy_aws }}
+    runs-on: ubuntu-latest
+    environment: Prod
+    permissions:
+      id-token: write # GitHub OIDC -> AWS role assumption
+      contents: read
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: site
+          path: .output/public
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ARN }}
+          aws-region: ${{ secrets.AWS_DEPLOY_REGION }}
+
+      - name: Fetch deploy metadata from Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
+        with:
+          secret-ids: |
+            ${{ secrets.SECRETS_MANAGER_ARN }}
+          parse-json-secrets: true
+
+      - name: Sync to S3
+        run: aws s3 sync ./.output/public "s3://${PORTFOLIOSECRET_S3BUCKET}" --delete
 
       - name: Invalidate CloudFront
-        uses: chetan/invalidate-cloudfront-action@v2
+        uses: chetan/invalidate-cloudfront-action@6adb1f613f4102ad81cd08a7ba83b8abe490cb8d # v2.4.2
         env:
           DISTRIBUTION: ${{ env.PORTFOLIOSECRET_DISTRIBUTIONID }}
           PATHS: /*
+
+  # -------------------------------------------------------------------------
+  # Azure — Storage static website + Front Door (reads metadata from Key Vault)
+  # -------------------------------------------------------------------------
+  deploy-azure:
+    name: Deploy to Azure
+    needs: build
+    if: ${{ inputs.deploy_azure }}
+    runs-on: ubuntu-latest
+    environment: Prod
+    permissions:
+      id-token: write # GitHub OIDC -> Entra ID federated credential
+      contents: read
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: site
+          path: .output/public
+
+      - name: Azure login (OIDC)
+        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Read deploy metadata from Key Vault
+        run: |
+          secret=$(az keyvault secret show \
+            --vault-name "${{ vars.AZURE_KEY_VAULT }}" \
+            --name portfolio-deploy --query value -o tsv)
+          {
+            echo "STORAGE_ACCOUNT=$(echo "$secret" | jq -r .storageAccount)"
+            echo "RESOURCE_GROUP=$(echo "$secret" | jq -r .resourceGroup)"
+            echo "FD_PROFILE=$(echo "$secret" | jq -r .frontDoorProfile)"
+            echo "FD_ENDPOINT=$(echo "$secret" | jq -r .frontDoorEndpoint)"
+          } >> "$GITHUB_ENV"
+
+      - name: Upload to $web and purge Front Door
+        run: |
+          az storage blob upload-batch \
+            --account-name "$STORAGE_ACCOUNT" \
+            --auth-mode login \
+            --destination '$web' \
+            --source .output/public \
+            --overwrite
+          az afd endpoint purge \
+            --resource-group "$RESOURCE_GROUP" \
+            --profile-name "$FD_PROFILE" \
+            --endpoint-name "$FD_ENDPOINT" \
+            --content-paths '/*' \
+            --no-wait
+
+  # -------------------------------------------------------------------------
+  # GCP — Cloud Storage + Cloud CDN (reads metadata from Secret Manager)
+  # -------------------------------------------------------------------------
+  deploy-gcp:
+    name: Deploy to GCP
+    needs: build
+    if: ${{ inputs.deploy_gcp }}
+    runs-on: ubuntu-latest
+    environment: Prod
+    permissions:
+      id-token: write # GitHub OIDC -> Workload Identity Federation
+      contents: read
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: site
+          path: .output/public
+
+      - name: GCP auth (Workload Identity Federation)
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: Read deploy metadata from Secret Manager
+        run: |
+          secret=$(gcloud secrets versions access latest \
+            --secret=portfolio-deploy --project "${{ vars.GCP_PROJECT }}")
+          {
+            echo "GCS_BUCKET=$(echo "$secret" | jq -r .bucket)"
+            echo "URL_MAP=$(echo "$secret" | jq -r .urlMap)"
+          } >> "$GITHUB_ENV"
+
+      - name: Sync to Cloud Storage and invalidate CDN
+        run: |
+          gcloud storage rsync .output/public "gs://${GCS_BUCKET}" \
+            --recursive --delete-unmatched-destination-objects
+          gcloud compute url-maps invalidate-cdn-cache "$URL_MAP" \
+            --path "/*" --project "${{ vars.GCP_PROJECT }}" --async

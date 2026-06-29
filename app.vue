@@ -16,7 +16,11 @@
           <a v-for="item in navItems" :key="item.href" :href="item.href" class="nav__link">
             {{ item.label }}
           </a>
-          <a href="/Manideep_Chittineni_Resume.pdf" download class="btn btn-primary nav__cta">
+          <a
+            :href="`${base}Manideep_Chittineni_Resume.pdf`"
+            download
+            class="btn btn-primary nav__cta"
+          >
             Resume
           </a>
         </nav>
@@ -47,7 +51,7 @@
             {{ item.label }}
           </a>
           <a
-            href="/Manideep_Chittineni_Resume.pdf"
+            :href="`${base}Manideep_Chittineni_Resume.pdf`"
             download
             class="btn btn-primary nav__mobile-cta"
             @click="closeMenu"
@@ -71,7 +75,7 @@
           <a href="#about" class="footer__brand"
             >Manideep<span class="text-gradient"> Chittineni</span></a
           >
-          <p class="footer__tag">Cloud &amp; DevOps Architect</p>
+          <p class="footer__tag">Cloud · DevOps · AI Engineer</p>
         </div>
 
         <div class="footer__social">
@@ -104,6 +108,10 @@
   import SkillsSection from '~/components/SkillsSection.vue'
   import ExperienceSection from '~/components/ExperienceSection.vue'
   import ContactSection from '~/components/ContactSection.vue'
+
+  // Base URL: "/" locally & on AWS/CloudFront, "/<repo>/" on GitHub Pages.
+  // Prefix public assets with it so they resolve under a project-page subpath.
+  const base = useRuntimeConfig().app.baseURL
 
   const navItems = [
     { label: 'About', href: '#about' },

@@ -1,8 +1,8 @@
 # Manideep Chittineni — Portfolio
 
 A fast, statically-generated personal portfolio for a Cloud & DevOps engineer,
-built with **Nuxt 3** and **Tailwind CSS v4** and deployed to **AWS** (private
-S3 origin behind CloudFront) via a least-privilege **GitHub Actions** pipeline.
+built with **Nuxt 3** and **Tailwind CSS v4**, deployed to **GitHub Pages** (with
+alternative **AWS / Azure / GCP** CDN paths) via **GitHub Actions**.
 
 ![Nuxt](https://img.shields.io/badge/Nuxt-3-00DC82?logo=nuxt.js&logoColor=white)
 ![Vue](https://img.shields.io/badge/Vue-3-4FC08D?logo=vue.js&logoColor=white)
@@ -49,10 +49,10 @@ and a responsive nav with a mobile menu.
 | Rendering     | Static Site Generation (Nitro `static` preset, all routes prerendered)                                                    |
 | Styling       | [Tailwind CSS v4](https://tailwindcss.com) via `@nuxtjs/tailwindcss` + a plain-CSS design system in `assets/css/main.css` |
 | Fonts         | Inter (Google Fonts, preconnected)                                                                                        |
-| Hosting       | Private **S3** bucket (origin) behind **CloudFront** (Origin Access Control)                                              |
-| Edge security | **AWS WAFv2**, TLS 1.2+, security response headers, KMS-encrypted secret                                                  |
-| CI/CD         | **GitHub Actions** with OIDC (no long-lived AWS keys)                                                                     |
-| IaC           | **CloudFormation** _or_ **Terraform** (equivalent; see [`infra/`](infra/))                                                |
+| Hosting       | **GitHub Pages** (primary), or **AWS / Azure / GCP** CDN (alternatives; see [`infra/`](infra/))                           |
+| Edge security | WAF (AWS/Azure), TLS 1.2+, security response headers + **CSP**, encrypted deploy secret                                   |
+| CI/CD         | **GitHub Actions** with OIDC across all clouds (no long-lived keys); CI gate + gitleaks + Dependabot                      |
+| IaC           | **CloudFormation** (AWS) _and_ **Terraform** for all three clouds (see [`infra/`](infra/))                                |
 | Tooling       | Prettier, PostCSS, Autoprefixer                                                                                           |
 
 ## Architecture
@@ -72,9 +72,11 @@ flowchart LR
 
 The deploy job builds the static site, syncs it to the private S3 bucket, and
 invalidates the CloudFront cache. CloudFront reads from S3 using Origin Access
-Control (OAC); the bucket itself blocks all public access. Full infrastructure
-details — parameters, deploy order, and security posture — are in
-[`infra/README.md`](infra/README.md).
+Control (OAC); the bucket itself blocks all public access. The **Azure** (Storage
+Account and Front Door) and **GCP** (Cloud Storage and Cloud CDN) paths are
+equivalent — private origin → CDN → edge security headers, deployed by the same
+workflow. Full per-cloud details — parameters, deploy order, and security
+posture — are in [`infra/README.md`](infra/README.md).
 
 ## Project structure
 
@@ -91,11 +93,14 @@ details — parameters, deploy order, and security posture — are in
 │   └── ContactSection.vue      # Contact form (mailto) + info + socials
 ├── plugins/
 │   └── reveal.client.ts        # IntersectionObserver scroll-reveal (client-only)
-├── public/                     # Served as-is: profile.jpg, resume PDF, robots.txt, favicon
-├── infra/                      # IaC: CloudFormation (*.yml) + Terraform (terraform/)
-├── wrangler.toml               # Cloudflare Workers Static Assets config (alt hosting)
-└── .github/workflows/
-    └── deploy_prod.yml         # Manual (workflow_dispatch) deploy to AWS
+├── public/                     # Served as-is: profile.jpg, resume PDF, robots.txt, .nojekyll
+├── infra/                      # IaC per cloud: AWS/ (CFN + Terraform), Azure/, GCP/ (Terraform)
+└── .github/
+    ├── dependabot.yml          # Weekly npm + github-actions update PRs
+    └── workflows/
+        ├── ci.yml              # PR/push gate: format, build, npm audit, gitleaks
+        ├── deploy_pages.yml    # Auto deploy to GitHub Pages (push to main)
+        └── deploy_prod.yml     # Manual deploy → AWS / Azure / GCP (toggleable)
 ```
 
 ## Getting started
@@ -156,61 +161,50 @@ under `public/`.
 
 ## Deployment
 
-Two independent hosting paths are configured — use whichever you prefer (don't
-run both against the same domain).
+Two hosting paths are configured — use whichever you prefer (don't run both
+against the same domain).
 
-### AWS — S3 + CloudFront (primary)
+### GitHub Pages (primary)
 
-Deployment is a manual **`workflow_dispatch`** run of
-[`.github/workflows/deploy_prod.yml`](.github/workflows/deploy_prod.yml). The
-job authenticates to AWS via GitHub OIDC (no stored keys), reads the target
-bucket/distribution from Secrets Manager, builds the site, runs
-`aws s3 sync … --delete`, and invalidates CloudFront. A `concurrency` group
-serializes deploys so two runs can't interleave.
+On every push to `main` (or a manual run),
+[`.github/workflows/deploy_pages.yml`](.github/workflows/deploy_pages.yml)
+generates the static site and publishes it to **GitHub Pages** via the official
+`actions/deploy-pages` flow. It builds with `NUXT_APP_BASE_URL=/<repo>/` so assets
+resolve under the project-page subpath (`https://<user>.github.io/<repo>/`), and
+ships [`public/.nojekyll`](public/.nojekyll) so the `_nuxt/` directory isn't
+stripped by Jekyll.
 
-**Required GitHub repository secrets:**
+**One-time setup:** GitHub → **Settings → Pages → Build and deployment → Source:
+GitHub Actions**. The deploy URL appears on the workflow's `github-pages`
+environment.
 
-| Secret                | Value                                                            |
-| --------------------- | ---------------------------------------------------------------- |
-| `AWS_DEPLOY_ARN`      | ARN of the GitHub Actions IAM role (`IAMRoleArn` output)         |
-| `AWS_DEPLOY_REGION`   | Region the infra lives in (`us-east-1` when WAF/ACM are enabled) |
-| `SECRETS_MANAGER_ARN` | ARN of the deploy secret (`SecretArn` output)                    |
+> **Custom domain / user site at root?** Set `NUXT_APP_BASE_URL` to `/` in the
+> workflow and add a `CNAME`. Note: GitHub Pages cannot set custom response
+> headers (no HSTS/CSP) — the AWS/CloudFront path can.
 
-The repo must also define a **`Prod`** GitHub environment (the workflow runs in
-it, and the IAM trust policy is scoped to `environment:Prod` by default).
+### Cloud CDN — AWS / Azure / GCP (alternative)
 
-➡️ **Infrastructure provisioning, stack parameters, deploy order, and the
-security model are documented in [`infra/README.md`](infra/README.md).**
+A manual **`workflow_dispatch`** run of
+[`.github/workflows/deploy_prod.yml`](.github/workflows/deploy_prod.yml) **builds
+the site once** and fans the artifact out to whichever clouds you enable via the
+run's checkboxes (`deploy_aws` / `deploy_azure` / `deploy_gcp`). Each cloud job
+authenticates with **GitHub OIDC** (no stored keys), reads its resource names
+from the deploy secret it provisioned, syncs the files, and invalidates the CDN.
+A `concurrency` group serializes deploys.
 
-### Cloudflare (Workers Static Assets)
+**Required GitHub secrets / variables** (set from each stack's `terraform output`):
 
-The site can also be hosted on **Cloudflare** via [`wrangler.toml`](wrangler.toml),
-which configures an **assets-only Worker** (Workers Static Assets) that serves the
-prerendered output (`.output/public`) directly — no server code. This is the modern
-replacement for legacy "Workers Sites", so it avoids the
-`No such module "__STATIC_CONTENT_MANIFEST"` error, and it works with the
-`wrangler deploy` / `wrangler versions upload` commands a Cloudflare Build runs.
-Security headers come from [`public/_headers`](public/_headers); unknown paths
-serve the prerendered `404.html` (`not_found_handling = "404-page"`).
+| Cloud | Secrets                                                       | Variables         |
+| ----- | ------------------------------------------------------------- | ----------------- |
+| AWS   | `AWS_DEPLOY_ARN`, `AWS_DEPLOY_REGION`, `SECRETS_MANAGER_ARN`  | —                 |
+| Azure | `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID` | `AZURE_KEY_VAULT` |
+| GCP   | `GCP_WORKLOAD_IDENTITY_PROVIDER`, `GCP_SERVICE_ACCOUNT`       | `GCP_PROJECT`     |
 
-The Cloudflare Workers Build is configured as:
+The repo must also define a **`Prod`** GitHub environment (every deploy job runs
+in it, and each OIDC trust is scoped to `environment:Prod` by default).
 
-| Setting         | Value                                     |
-| --------------- | ----------------------------------------- |
-| Build command   | `npm run build` _(or `npm run generate`)_ |
-| Deploy command  | `npx wrangler deploy` (production)        |
-| Version command | `npx wrangler versions upload` (previews) |
-| Root directory  | `/`                                       |
-
-Both `npm run build` and `npm run generate` emit the static `.output/public` here,
-because `nuxt.config.ts` sets the Nitro `static` preset — `generate` is the more
-robust choice as it always forces static output. Deploy via the Git integration, or
-manually:
-
-```bash
-npm run build
-npx wrangler deploy          # or: npx wrangler versions upload
-```
+➡️ **Per-cloud provisioning, the deploy-identity matrix, and the security model
+are documented in [`infra/README.md`](infra/README.md).**
 
 ## Accessibility, SEO & performance
 
@@ -223,14 +217,5 @@ npx wrangler deploy          # or: npx wrangler versions upload
   relative paths.)_
 - **Performance:** static prerender, CloudFront compression + caching,
   preconnected fonts, lazy-loaded brand icons, and a JS-light reveal mechanism.
-
-## Roadmap
-
-- [ ] Configure a custom domain + ACM certificate (enables the TLS 1.2+ floor and absolute OG image URLs)
-- [ ] Optional migration to Nuxt 4 / vue-router 5
-- [ ] Replace the `mailto:` contact form with a real form backend (e.g. an API endpoint) so messages aren't lost when no mail client is configured
-- [ ] Drop unused `@headlessui/vue` / `@heroicons/vue` dependencies if they stay unused
-
----
 
 © Manideep Chittineni. All rights reserved.

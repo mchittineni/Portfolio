@@ -5,7 +5,8 @@
         <p class="eyebrow">Career so far</p>
         <h2 class="section-title">Work <span class="text-gradient">Experience</span></h2>
         <p class="section-sub">
-          Building and optimizing cloud platforms across AWS, GCP and Azure.
+          Building, securing, and optimizing cloud platforms across AWS, Azure, and GCP, now
+          extending into production GenAI engineering.
         </p>
       </header>
 
@@ -53,103 +54,111 @@
 <script setup>
   const jobs = [
     {
-      role: 'DevOps Engineer',
-      company: 'University of Exeter',
-      period: 'Oct 2022 - Present',
+      role: 'Cloud Engineer',
+      company: 'Infoplus Technologies',
+      period: 'Mar 2026 - Present',
       metrics: [
-        { value: '45%', label: 'Cost Reduction' },
-        { value: '60%', label: 'Faster Deployments' },
-        { value: '99.9%', label: 'System Uptime' },
+        { value: '<2 hrs', label: 'Platform Provisioning' },
+        { value: '25+', label: 'Terraform Modules' },
+        { value: '99.9%', label: 'K8s Availability' },
       ],
       groups: [
         {
-          title: 'Cloud & Infrastructure (AWS)',
+          title: 'Cloud-Native Infrastructure (AWS + GCP)',
           points: [
-            'Multi-tier architecture design using EC2, VPC, Lambda, S3',
-            'Infrastructure as Code with CloudFormation, CDK (TypeScript), Terraform',
-            'Serverless & event-driven architecture using Lambda, EventBridge, AppSync',
-            'Networking: VPC, Route53, Load Balancing, ACM',
-            'Content delivery via CloudFront, DNS with Route 53',
-            'Optimized cloud resources resulting in 45% cost savings',
-            'Implemented disaster recovery solutions improving system resilience',
-            'Managed Kubernetes clusters using EKS, Fargate for container orchestration',
+            'Engineered cloud-native infra for a Speckle design ecosystem and Databricks platform, cutting provisioning from 3 days to under 2 hours',
+            'Built a modular Terraform framework of 25+ reusable modules with remote state, reaching 100% repeatable deploys and reducing drift by 70%',
+            'Operated managed Kubernetes on GCP at 99.9% availability; autoscaling cut idle compute by 25%',
+            'Integrated data-engineering workflows on Databricks (Unity Catalog, cluster policies, job orchestration)',
           ],
         },
         {
-          title: 'Security & Automation',
+          title: 'GenAI & Platform Engineering',
           points: [
-            'Security: IAM, Secrets Manager, AWS WAF, KMS, Cognito, AWS Config',
-            'CI/CD: CodePipeline, CodeBuild, CodeDeploy, GitHub Actions',
-            'Containerization: ECS, EKS, Fargate, Docker',
-            'Implemented IaC using Terraform, reducing deployment time by 60%',
-            'Monitoring: CloudWatch, Systems Manager, CloudTrail, Cost Explorer',
-            'Governance: Control Tower, Resource Explorer, Well-Architected Framework',
-            'Code Quality: SonarCloud, Linter, OIDC integration',
-            'Managed Kubernetes clusters supporting 100+ microservices with 99.9% uptime',
+            'Prototyped GenAI and agentic-AI in platform tooling (Claude API, OpenAI, MCP), reducing manual toil by 30%',
+            'Ran LLMOps on Amazon Bedrock and Vertex AI, reusing the same IaC, CI/CD, identity, and FinOps controls with zero new security findings',
+            'Applied Zero Trust, least-privilege IAM, and policy-as-code across the platform',
           ],
         },
       ],
     },
     {
-      role: 'DevOps Engineer',
-      company: 'Procadence Technologies Limited',
+      role: 'Senior Cloud & DevOps Engineer',
+      company: 'University of Exeter',
+      period: 'Oct 2022 - Dec 2025',
+      metrics: [
+        { value: '50,000+', label: 'Users Supported' },
+        { value: '99.99%', label: 'Uptime' },
+        { value: '45%', label: 'Cost Reduction' },
+      ],
+      groups: [
+        {
+          title: 'Cloud Platforms & Governance (AWS)',
+          points: [
+            'Ran hybrid and AWS platforms supporting 50,000+ users at 99.99% uptime',
+            'Built serverless, event-driven architectures (Lambda, API Gateway, SNS/SQS, DynamoDB)',
+            'Established multi-account governance with Organizations, Control Tower, and SCPs',
+            'Drove FinOps (RIs, Spot, autoscaling, rightsizing) cutting spend by 45%; mentored 5+ engineers',
+          ],
+        },
+        {
+          title: 'Security & Compliance (DevSecOps)',
+          points: [
+            'Implemented Zero Trust least-privilege IAM and federated identity (SSO/OIDC, RBAC/ABAC)',
+            'Managed Secrets Manager + KMS rotation, Security Hub, GuardDuty, and Config',
+            'Aligned controls to GDPR / SOC 2, reducing incident response time by 50%',
+          ],
+        },
+      ],
+    },
+    {
+      role: 'DevOps / Platform Engineer',
+      company: 'Procadence Technologies',
       period: 'Apr 2021 - Sep 2022',
       metrics: [
-        { value: '85%', label: 'Automation Rate' },
-        { value: '50%', label: 'Faster Response' },
-        { value: '40%', label: 'Cost Savings' },
+        { value: '200+', label: 'Microservices' },
+        { value: '99.9%', label: 'Uptime' },
+        { value: '100%', label: 'Keyless CI/CD' },
       ],
       groups: [
         {
-          title: 'Cloud & Infrastructure (GCP)',
+          title: 'Platform Engineering (GCP / GKE)',
           points: [
-            'Multi-tier architecture design using Compute Engine, VPC, Cloud Functions',
-            'Infrastructure as Code with Deployment Manager, Terraform, Pulumi',
-            'Serverless & event-driven architecture using Cloud Functions, Pub/Sub, Cloud Run',
-            'Automated infra provisioning using Ansible, achieving 85% automation rate',
-            'Optimized cloud resources resulting in 40% cost savings',
+            'Operated GKE clusters running 200+ microservices for 15+ teams at 99.9% uptime; utilisation up 30%',
+            'Authored reusable Terraform IaC for IAM and governance, cutting drift and manual effort by 60%',
           ],
         },
         {
-          title: 'Security & Automation',
+          title: 'Security & Multi-Tenancy',
           points: [
-            'Security: IAM, Secret Manager, Cloud Armor, Cloud KMS, Identity-Aware Proxy',
-            'CI/CD: Implemented CI/CD pipelines reducing deployment time by 50%',
-            'Monitoring: Cloud Monitoring, Cloud Logging, Cloud Trace, Cost Management',
-            'Governance: Organization Policies, Resource Manager, Assured Workloads',
-            'Code Quality: SonarCloud, ESLint, OIDC integration with GitHub/GitLab',
+            'Delivered keyless CI/CD via Workload Identity Federation, eliminating 100% of long-lived service-account keys',
+            'Enforced multi-tenant isolation (namespaces, RBAC, IAM Conditions) and Zero Trust via IAP, with zero cross-tenant incidents',
           ],
         },
       ],
     },
     {
-      role: 'DevOps Engineer Intern',
-      company: 'Procadence Technologies Limited',
+      role: 'Software Engineer Intern',
+      company: 'Procadence Technologies',
       period: 'Jun 2020 - Mar 2021',
       metrics: [
-        { value: '99.9%', label: 'Uptime' },
-        { value: '75%', label: 'Faster Recovery' },
-        { value: '45%', label: 'Efficiency Gain' },
+        { value: '150+', label: 'Azure Subscriptions' },
+        { value: '45%', label: 'Less Manual Effort' },
+        { value: '35%', label: 'Faster Releases' },
       ],
       groups: [
         {
-          title: 'Cloud & Infrastructure (Azure)',
+          title: 'Azure Automation',
           points: [
-            'Managed cloud infrastructure across Azure with 99.9% uptime',
-            'Multi-tier architecture design using Virtual Machines, Azure Functions, Blob Storage',
-            'Implemented disaster recovery solutions reducing recovery time by 75%',
-            'Infrastructure as Code with ARM templates, Bicep, Terraform, Pulumi',
-            'Automated routine tasks improving operational efficiency by 45%',
+            'Automated Azure provisioning (ARM) across 150+ subscriptions, reducing manual effort by 45%',
+            'Built Azure DevOps CI/CD with automated testing and secure deploys, cutting release effort by 35%',
           ],
         },
         {
-          title: 'Security & Automation',
+          title: 'Identity & Governance',
           points: [
-            'Security: Azure AD, Key Vault, Azure Firewall, Role-Based Access Control',
-            'CI/CD: Azure DevOps, GitHub Actions, Pipelines with YAML',
-            'Monitoring: Azure Monitor, Log Analytics, Application Insights, Cost Management',
-            'Governance: Azure Policy, Blueprints, Management Groups, Resource Graph',
-            'Code Quality: SonarCloud, ESLint, OIDC integration with Azure AD/GitHub',
+            'Centralised secrets via Key Vault; managed Entra ID RBAC and service principals at scale',
+            'Enforced Zero Trust via Azure Policy, Management Groups, and Conditional Access (MFA + device compliance)',
           ],
         },
       ],

@@ -10,20 +10,20 @@
       <!-- Content -->
       <div class="hero__content">
         <p class="eyebrow animate-in" style="animation-delay: 0.05s">
-          Cloud &amp; DevOps Architect
+          Cloud · DevOps · AI Engineer
         </p>
         <h1 class="hero__title animate-in" style="animation-delay: 0.15s">
           Hi, I'm <span class="text-gradient">Manideep&nbsp;Chittineni</span>
         </h1>
         <p class="hero__lede animate-in" style="animation-delay: 0.25s">
-          I specialize in enterprise-scale migrations and cloud infrastructure optimization —
-          transforming complex systems into efficient, scalable, secure, and cost-effective
-          solutions.
+          I design, build, secure, and operate scalable cloud-native and hybrid infrastructure
+          across AWS, Azure, and GCP, now extending that foundation into production GenAI and
+          agentic-AI engineering.
         </p>
 
         <div class="hero__actions animate-in" style="animation-delay: 0.35s">
           <a href="#contact" class="btn btn-primary">Get in Touch</a>
-          <a href="/Manideep_Chittineni_Resume.pdf" download class="btn btn-ghost">
+          <a :href="`${base}Manideep_Chittineni_Resume.pdf`" download class="btn btn-ghost">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
               <path
                 stroke-linecap="round"
@@ -49,7 +49,7 @@
         <div class="hero__photo-ring">
           <div class="hero__photo">
             <img
-              src="/profile.jpg"
+              :src="`${base}profile.jpg`"
               alt="Portrait of Manideep Chittineni"
               width="320"
               height="320"
@@ -71,11 +71,14 @@
 </template>
 
 <script setup>
+  // Base URL ("/" locally & on AWS, "/<repo>/" on GitHub Pages) for public assets.
+  const base = useRuntimeConfig().app.baseURL
+
   const stats = [
-    { value: '5+', label: 'Years Experience' },
-    { value: '6', label: 'Cloud Certifications' },
-    { value: '99.9%', label: 'System Uptime' },
-    { value: '45%', label: 'Avg. Cost Saved' },
+    { value: '6+', label: 'Years Experience' },
+    { value: '4', label: 'Clouds Mastered' },
+    { value: '99.99%', label: 'Uptime Delivered' },
+    { value: '45%', label: 'Cost Reduction' },
   ]
 </script>
 

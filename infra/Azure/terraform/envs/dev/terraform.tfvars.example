@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars and fill in.
+subscription_id      = "00000000-0000-0000-0000-000000000000"
+storage_account_name = "myportfoliodev"
+key_vault_name       = "myportfolio-dev-kv"
+github_org           = "mchittineni"
+github_repo          = "Portfolio"
+
+# location            = "eastus"
+# resource_group_name = "portfolio-dev-rg"
