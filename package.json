@@ -11,7 +11,7 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.3",
+    "@nuxt/devtools": "^3.2.4",
     "autoprefixer": "^10.5.2",
     "nuxt": "^3.21.8",
     "postcss": "^8.5.16",
