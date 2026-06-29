@@ -184,6 +184,25 @@ resource "aws_cloudfront_response_headers_policy" "security" {
       mode_block = true
       override   = true
     }
+    content_security_policy {
+      # Allowlist only what the site loads: Google Fonts (CSS + font files) and
+      # the brand-icon CDNs. 'unsafe-inline' is required for Nuxt's inlined
+      # hydration script and scoped styles in the static build.
+      content_security_policy = join(" ", [
+        "default-src 'self';",
+        "base-uri 'self';",
+        "object-src 'none';",
+        "frame-ancestors 'none';",
+        "img-src 'self' data: https://cdn.jsdelivr.net https://www.vectorlogo.zone;",
+        "font-src 'self' https://fonts.gstatic.com;",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
+        "script-src 'self' 'unsafe-inline';",
+        "connect-src 'self';",
+        "form-action 'self';",
+        "upgrade-insecure-requests",
+      ])
+      override = true
+    }
   }
 }
 

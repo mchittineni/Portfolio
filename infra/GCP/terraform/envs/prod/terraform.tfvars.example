@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars and fill in.
+project_id  = "my-gcp-project"
+bucket_name = "my-portfolio-prod"
+github_org  = "mchittineni"
+github_repo = "Portfolio"
+
+# region      = "us-central1"
+# location    = "US"
+# Optional custom domain (enables the managed-cert HTTPS LB + HTTP->HTTPS redirect):
+# domain_name = "www.example.com"

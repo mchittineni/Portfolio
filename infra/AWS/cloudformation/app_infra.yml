@@ -167,6 +167,20 @@ Resources:
             Protection: true
             ModeBlock: true
             Override: true
+          ContentSecurityPolicy:
+            # Allowlist only what the site actually loads: Google Fonts (CSS +
+            # font files) and the brand-icon CDNs (jsDelivr, vectorlogo.zone).
+            # 'unsafe-inline' is required for Nuxt's inlined hydration script and
+            # scoped styles in the static build.
+            ContentSecurityPolicy: >-
+              default-src 'self'; base-uri 'self'; object-src 'none';
+              frame-ancestors 'none';
+              img-src 'self' data: https://cdn.jsdelivr.net https://www.vectorlogo.zone;
+              font-src 'self' https://fonts.gstatic.com;
+              style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+              script-src 'self' 'unsafe-inline'; connect-src 'self';
+              form-action 'self'; upgrade-insecure-requests
+            Override: true
 
   WAFWebACL:
     Type: AWS::WAFv2::WebACL

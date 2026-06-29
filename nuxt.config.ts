@@ -1,9 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  target: 'static', // ✅ Static generation mode
   nitro: {
-    preset: 'static', // ✅ Enable full static generation
+    preset: 'static', // full static generation -> .output/public
   },
   routeRules: {
     // prerender index route
@@ -25,7 +24,7 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'Specialized in enterprise-scale migrations and optimizing cloud infrastructure for maximum performance and cost efficiency.',
+            'Cloud, DevOps & AI Engineer with 6+ years across AWS, Azure & GCP, building secure, governed, cost-aware platforms and production GenAI & agentic-AI systems.',
         },
         // Open Graph
         { property: 'og:type', content: 'website' },
@@ -33,21 +32,24 @@ export default defineNuxtConfig({
         {
           property: 'og:description',
           content:
-            'Cloud & DevOps engineer specialized in enterprise-scale migrations and optimizing cloud infrastructure for performance and cost efficiency.',
+            'Cloud, DevOps & AI Engineer with 6+ years across AWS, Azure & GCP, now building production GenAI and agentic-AI systems under platform governance.',
         },
-        { property: 'og:image', content: '/profile.jpg' },
+        // Absolute URL required by social crawlers (update if a custom domain is added).
+        { property: 'og:image', content: 'https://mchittineni.github.io/Portfolio/profile.jpg' },
+        { property: 'og:url', content: 'https://mchittineni.github.io/Portfolio/' },
         // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: 'Manideep Chittineni' },
         {
           name: 'twitter:description',
           content:
-            'Cloud & DevOps engineer specialized in enterprise-scale migrations and optimizing cloud infrastructure for performance and cost efficiency.',
+            'Cloud, DevOps & AI Engineer with 6+ years across AWS, Azure & GCP, now building production GenAI and agentic-AI systems under platform governance.',
         },
-        { name: 'twitter:image', content: '/profile.jpg' },
+        { name: 'twitter:image', content: 'https://mchittineni.github.io/Portfolio/profile.jpg' },
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        // Relative so it resolves at both root ("/") and a project-page subpath.
+        { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {
