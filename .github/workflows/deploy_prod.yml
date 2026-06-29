@@ -1,0 +1,64 @@
+name: Deploy Website (Prod)
+
+on:
+  workflow_dispatch:
+
+# Serialize deploys so two dispatches can't interleave an `s3 sync --delete`.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+permissions:
+  id-token: write # required for the GitHub OIDC -> AWS role assumption
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Prod
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ARN }}
+          aws-region: ${{ secrets.AWS_DEPLOY_REGION }}
+
+      - name: Fetch AWS Secret from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v3
+        with:
+          secret-ids: |
+            ${{ secrets.SECRETS_MANAGER_ARN }}
+          parse-json-secrets: true
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Build Nuxt application
+        run: |
+          echo "Build started on $(date)"
+          npm run generate
+          echo "Build completed on $(date)"
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./.output/public "s3://${PORTFOLIOSECRET_S3BUCKET}" --delete
+
+      - name: Invalidate CloudFront
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ env.PORTFOLIOSECRET_DISTRIBUTIONID }}
+          PATHS: /*
