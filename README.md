@@ -93,7 +93,7 @@ details — parameters, deploy order, and security posture — are in
 │   └── reveal.client.ts        # IntersectionObserver scroll-reveal (client-only)
 ├── public/                     # Served as-is: profile.jpg, resume PDF, robots.txt, favicon
 ├── infra/                      # IaC: CloudFormation (*.yml) + Terraform (terraform/)
-├── wrangler.toml               # Cloudflare Pages config (alternative hosting)
+├── wrangler.toml               # Cloudflare Workers Static Assets config (alt hosting)
 └── .github/workflows/
     └── deploy_prod.yml         # Manual (workflow_dispatch) deploy to AWS
 ```
@@ -182,33 +182,25 @@ it, and the IAM trust policy is scoped to `environment:Prod` by default).
 ➡️ **Infrastructure provisioning, stack parameters, deploy order, and the
 security model are documented in [`infra/README.md`](infra/README.md).**
 
-### Cloudflare Pages (alternative)
+### Cloudflare (Workers Static Assets)
 
-The site can also be hosted on **Cloudflare Pages**, configured by
-[`wrangler.toml`](wrangler.toml) (`pages_build_output_dir = ".output/public"`)
-with security headers in [`public/_headers`](public/_headers). Because Pages
-serves the **prerendered static output directly — with no Worker** — it avoids
-the legacy Workers Sites error `No such module "__STATIC_CONTENT_MANIFEST"`.
+The site can also be hosted on **Cloudflare** via [`wrangler.toml`](wrangler.toml),
+which configures an **assets-only Worker** (Workers Static Assets) that serves the
+prerendered output (`.output/public`) directly — no server code. This is the modern
+replacement for legacy "Workers Sites", so it avoids the
+`No such module "__STATIC_CONTENT_MANIFEST"` error, and it works with the
+`wrangler deploy` / `wrangler versions upload` commands a Cloudflare Build runs.
+Security headers come from [`public/_headers`](public/_headers); unknown paths
+serve the prerendered `404.html` (`not_found_handling = "404-page"`).
 
-Set the project's build configuration to:
-
-| Setting                | Value              |
-| ---------------------- | ------------------ |
-| Framework preset       | Nuxt _(or None)_   |
-| Build command          | `npm run generate` |
-| Build output directory | `.output/public`   |
-
-Then deploy via the Git integration, or manually:
+Set the project's **build command** to `npm run generate` (the output directory is
+wired via `[assets] directory` in `wrangler.toml`). Deploy via the Git integration,
+or manually:
 
 ```bash
 npm run generate
-npx wrangler pages deploy        # uses pages_build_output_dir from wrangler.toml
+npx wrangler deploy          # or: npx wrangler versions upload
 ```
-
-> If an existing Cloudflare **Workers** project is deploying this repo with
-> `wrangler deploy` (the source of the `__STATIC_CONTENT_MANIFEST` failure),
-> point it at a **Pages** project with the settings above instead — a static
-> Nuxt site needs no Worker.
 
 ## Accessibility, SEO & performance
 

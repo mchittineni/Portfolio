@@ -1,4 +1,4 @@
-# Cloudflare Pages headers (https://developers.cloudflare.com/pages/configuration/headers/).
+# Cloudflare static-asset headers (works for Workers Assets and Pages).
 # Mirrors the security headers the AWS CloudFront response-headers policy applies,
 # so both hosting paths behave the same. Copied verbatim into the build output.
 
