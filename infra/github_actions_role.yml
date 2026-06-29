@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Github Action Role For App Deployments
+Description: GitHub Actions OIDC role (least-privilege) for static site deployments
 
 Parameters:
   EnvironmentType:
@@ -14,16 +14,43 @@ Parameters:
     Type: String
     Default: MC
     Description: Name of the team this stack belongs to.
+  GitHubOrg:
+    Type: String
+    Description: GitHub organization or user that owns the repository.
+  GitHubRepo:
+    Type: String
+    Description: GitHub repository name allowed to assume this role.
+  GitHubSubjectClaim:
+    Type: String
+    Default: 'environment:Prod'
+    Description: >-
+      OIDC subject suffix the role trusts. Defaults to the Prod environment used
+      by deploy_prod.yml. Use e.g. 'ref:refs/heads/main' to scope to a branch,
+      or '*' (NOT recommended) to allow any ref/PR/tag.
+  DeployBucketName:
+    Type: String
+    Description: Name of the S3 bucket the website is deployed to.
+    AllowedPattern: '^[a-z0-9\-\.]{3,63}$'
+  DistributionId:
+    Type: String
+    Default: '*'
+    Description: CloudFront distribution ID allowed for invalidations ('*' for any in this account).
+  SecretArn:
+    Type: String
+    Default: '*'
+    Description: ARN of the Secrets Manager secret the workflow may read ('*' for any).
+  SecretsKmsKeyArn:
+    Type: String
+    Default: '*'
+    Description: ARN of the KMS key used to decrypt the deploy secret ('*' for any).
 
 Resources:
-  # A role needed by Github
+  # A role needed by GitHub Actions, scoped to exactly what a static-site deploy requires.
   GithubActionsRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: github_actions_role
-      Description: A GitHub Actions for deploying the application.
-      ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+      Description: GitHub Actions role for deploying the static website (least-privilege).
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-IAMRole'
@@ -34,18 +61,52 @@ Resources:
         - Key: Project
           Value: !Ref ProjectName
       AssumeRolePolicyDocument:
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
-              Federated: arn:aws:iam::1111111111111:oidc-provider/token.actions.githubusercontent.com
+              Federated: !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com'
             Action: 'sts:AssumeRoleWithWebIdentity'
             Condition:
               StringEquals:
                 'token.actions.githubusercontent.com:aud': sts.amazonaws.com
               StringLike:
-                'token.actions.githubusercontent.com:sub': repo:abc/xyz:*
+                'token.actions.githubusercontent.com:sub': !Sub 'repo:${GitHubOrg}/${GitHubRepo}:${GitHubSubjectClaim}'
+      Policies:
+        - PolicyName: StaticSiteDeploy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: ListDeployBucket
+                Effect: Allow
+                Action:
+                  - 's3:ListBucket'
+                Resource: !Sub 'arn:aws:s3:::${DeployBucketName}'
+              - Sid: SyncDeployBucketObjects
+                Effect: Allow
+                Action:
+                  - 's3:GetObject'
+                  - 's3:PutObject'
+                  - 's3:DeleteObject'
+                Resource: !Sub 'arn:aws:s3:::${DeployBucketName}/*'
+              - Sid: InvalidateCloudFront
+                Effect: Allow
+                Action:
+                  - 'cloudfront:CreateInvalidation'
+                  - 'cloudfront:GetInvalidation'
+                Resource: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistributionId}'
+              - Sid: ReadDeploySecret
+                Effect: Allow
+                Action:
+                  - 'secretsmanager:GetSecretValue'
+                Resource: !Ref SecretArn
+              - Sid: DecryptDeploySecret
+                Effect: Allow
+                Action:
+                  - 'kms:Decrypt'
+                Resource: !Ref SecretsKmsKeyArn
 
 Outputs:
   IAMRoleArn:
     Description: 'GitHub Actions IAM Role ARN'
-    Value: !Sub 'arn:aws:iam::${AWS::AccountId}:role/${GithubActionsRole}'
+    Value: !GetAtt GithubActionsRole.Arn

@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation template to host a static website using CloudFront and a private S3 bucket with a lifecycle configuration & WAF
+Description: >-
+  Hosts a static website on a private S3 bucket fronted by CloudFront (Origin
+  Access Control), with WAFv2, security response headers, KMS-encrypted secret,
+  access logging and bucket lifecycle rules. Deploy in us-east-1 when WAF is
+  enabled (CLOUDFRONT scope WebACLs must live in us-east-1).
 
 Parameters:
   BucketName:
@@ -23,14 +27,37 @@ Parameters:
     Type: String
     Default: MC
     Description: Name of the team this stack belongs to.
+  DomainName:
+    Type: String
+    Default: ''
+    Description: Optional custom domain (e.g. www.example.com). Leave blank to use the default CloudFront domain.
+  AcmCertificateArn:
+    Type: String
+    Default: ''
+    Description: Optional ACM certificate ARN in us-east-1 for the custom domain. Required if DomainName is set.
+  EnableWaf:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+    Description: Attach an AWSManagedRules WAFv2 WebACL to the distribution (requires us-east-1).
+
+Conditions:
+  HasCustomDomain: !And
+    - !Not [!Equals [!Ref DomainName, '']]
+    - !Not [!Equals [!Ref AcmCertificateArn, '']]
+  WafEnabled: !Equals [!Ref EnableWaf, 'true']
 
 Resources:
   S3Bucket:
-    # checkov:skip=CKV_AWS_18: ADD REASON
-    # checkov:skip=CKV_AWS_21: ADD REASON
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref BucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -41,6 +68,9 @@ Resources:
           - Id: DeleteOldObjects
             Status: Enabled
             ExpirationInDays: 365
+          - Id: ExpireNoncurrentVersions
+            Status: Enabled
+            NoncurrentVersionExpirationInDays: 30
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-S3Bucket'
@@ -51,11 +81,16 @@ Resources:
         - Key: Project
           Value: !Ref ProjectName
 
-  CloudFrontOriginIdentity:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+  # Origin Access Control (OAC) replaces the deprecated Origin Access Identity (OAI).
+  CloudFrontOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
     Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: !Sub 'OAI for ${AWS::StackName} CloudFront distribution'
+      OriginAccessControlConfig:
+        Name: !Sub '${AWS::StackName}-oac'
+        Description: !Sub 'OAC for ${AWS::StackName} CloudFront distribution'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -67,28 +102,32 @@ Resources:
           - Sid: AllowCloudFrontServicePrincipalReadOnly
             Effect: Allow
             Principal:
-              CanonicalUser: !GetAtt CloudFrontOriginIdentity.S3CanonicalUserId
+              Service: cloudfront.amazonaws.com
             Action: 's3:GetObject'
             Resource: !Sub '${S3Bucket.Arn}/*'
+            Condition:
+              StringEquals:
+                'AWS:SourceArn': !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}'
 
   CloudFrontLoggingBucket:
-    # checkov:skip=CKV_AWS_18: ADD REASON
-    # checkov:skip=CKV_AWS_21: ADD REASON
-    # checkov:skip=CKV_AWS_53: ADD REASON
-    # checkov:skip=CKV_AWS_54: ADD REASON
-    # checkov:skip=CKV_AWS_55: ADD REASON
-    # checkov:skip=CKV_AWS_56: ADD REASON
+    # checkov:skip=CKV_AWS_18: Access logging on a log bucket would be self-referential.
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub '${BucketName}-cf-logs'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
       OwnershipControls:
         Rules:
+          # CloudFront standard logging delivers logs via ACL grants to the
+          # log-delivery account, so ACLs must remain enabled on this bucket.
           - ObjectOwnership: BucketOwnerPreferred
       PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       LifecycleConfiguration:
         Rules:
           - Id: DeleteOldObjects
@@ -104,23 +143,79 @@ Resources:
         - Key: Project
           Value: !Ref ProjectName
 
-  CloudFrontLoggingBucketPolicy:
-    Type: AWS::S3::BucketPolicy
+  ResponseHeadersPolicy:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
     Properties:
-      Bucket: !Ref CloudFrontLoggingBucket
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal: '*'
-            Action: 's3:PutObject'
-            Resource: !Sub '${CloudFrontLoggingBucket.Arn}/*'
-            Condition:
-              StringEquals:
-                's3:x-amz-acl': 'bucket-owner-full-control'
+      ResponseHeadersPolicyConfig:
+        Name: !Sub '${AWS::StackName}-security-headers'
+        Comment: Adds standard security headers to all responses.
+        SecurityHeadersConfig:
+          StrictTransportSecurity:
+            AccessControlMaxAgeSec: 63072000
+            IncludeSubdomains: true
+            Preload: true
+            Override: true
+          ContentTypeOptions:
+            Override: true
+          FrameOptions:
+            FrameOption: DENY
+            Override: true
+          ReferrerPolicy:
+            ReferrerPolicy: strict-origin-when-cross-origin
+            Override: true
+          XSSProtection:
+            Protection: true
+            ModeBlock: true
+            Override: true
+
+  WAFWebACL:
+    Type: AWS::WAFv2::WebACL
+    Condition: WafEnabled
+    Properties:
+      Name: !Sub '${AWS::StackName}-web-acl'
+      Scope: CLOUDFRONT
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub '${AWS::StackName}-web-acl'
+      Rules:
+        - Name: AWS-AWSManagedRulesCommonRuleSet
+          Priority: 0
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesCommonRuleSet
+        - Name: AWS-AWSManagedRulesKnownBadInputsRuleSet
+          Priority: 1
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: AWSManagedRulesKnownBadInputsRuleSet
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-WebACL'
+        - Key: Environment
+          Value: !Ref EnvironmentType
+        - Key: Team
+          Value: !Ref TeamName
+        - Key: Project
+          Value: !Ref ProjectName
 
   CloudFrontDistribution:
-    # checkov:skip=CKV_AWS_68: ADD REASON
     Type: AWS::CloudFront::Distribution
     Properties:
       Tags:
@@ -133,11 +228,20 @@ Resources:
         - Key: Project
           Value: !Ref ProjectName
       DistributionConfig:
+        Aliases: !If
+          - HasCustomDomain
+          - [!Ref DomainName]
+          - !Ref AWS::NoValue
+        WebACLId: !If
+          - WafEnabled
+          - !GetAtt WAFWebACL.Arn
+          - !Ref AWS::NoValue
         Origins:
           - DomainName: !GetAtt S3Bucket.RegionalDomainName
             Id: S3Origin
+            OriginAccessControlId: !GetAtt CloudFrontOriginAccessControl.Id
             S3OriginConfig:
-              OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginIdentity}'
+              OriginAccessIdentity: ''
         Enabled: true
         DefaultRootObject: index.html
         DefaultCacheBehavior:
@@ -151,14 +255,25 @@ Resources:
             - GET
             - HEAD
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # Managed-CachingOptimized
+          ResponseHeadersPolicyId: !Ref ResponseHeadersPolicy
         CustomErrorResponses:
+          # Private S3 returns 403 for missing keys; surface a real 404 instead
+          # of masking missing assets as a 200.
           - ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: /index.html
+            ResponseCode: 404
+            ResponsePagePath: /404.html
             ErrorCachingMinTTL: 10
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: true
-          MinimumProtocolVersion: TLSv1.2_2021
+          - ErrorCode: 404
+            ResponseCode: 404
+            ResponsePagePath: /404.html
+            ErrorCachingMinTTL: 10
+        ViewerCertificate: !If
+          - HasCustomDomain
+          - AcmCertificateArn: !Ref AcmCertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
+            MinimumProtocolVersion: TLSv1.2_2021
         Logging:
           Bucket: !GetAtt CloudFrontLoggingBucket.DomainName
           IncludeCookies: false
@@ -183,7 +298,7 @@ Resources:
     Properties:
       Name: !Ref SecretName
       Description: Stores CloudFront Distribution ID and S3 Bucket name
-      SecretString: '{"DistributionId": "CloudFrontDistribution", "S3Bucket": "S3BucketName" }'
+      SecretString: !Sub '{"DistributionId": "${CloudFrontDistribution}", "S3Bucket": "${S3Bucket}"}'
       KmsKeyId: !Ref KMSKeyForSecretsManager
       Tags:
         - Key: Name
@@ -200,14 +315,22 @@ Outputs:
     Description: 'CloudFront Distribution URL'
     Value: !Sub 'https://${CloudFrontDistribution.DomainName}'
 
+  DistributionId:
+    Description: 'CloudFront Distribution ID'
+    Value: !Ref CloudFrontDistribution
+
   S3BucketName:
     Description: 'Primary S3 Bucket Name'
     Value: !Ref S3Bucket
 
   CloudFrontLoggingBucketName:
-    Description: 'Cloufront Logging S3 Bucket Name'
+    Description: 'CloudFront Logging S3 Bucket Name'
     Value: !Ref CloudFrontLoggingBucket
 
   SecretArn:
     Description: 'Secrets Manager Secret ARN'
     Value: !Ref SecretsManagerSecret
+
+  SecretsKmsKeyArn:
+    Description: 'KMS Key ARN used to encrypt the deploy secret'
+    Value: !GetAtt KMSKeyForSecretsManager.Arn

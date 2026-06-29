@@ -1,98 +1,267 @@
 <template>
-  <section id="about" class="py-20 bg-gradient-to-br from-gray-50 to-gray-100"></section>
-  <section
-    class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800"
-  >
-    <!-- Animated background shapes -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div
-        class="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200 dark:bg-emerald-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"
-      ></div>
-      <div
-        class="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 dark:bg-emerald-700 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"
-      ></div>
-      <div
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-400 dark:bg-emerald-600 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"
-      ></div>
+  <section id="about" class="hero">
+    <!-- Floating accent orbs -->
+    <div class="hero__orbs" aria-hidden="true">
+      <span class="orb hero__orb-1"></span>
+      <span class="orb hero__orb-2"></span>
     </div>
 
-    <div class="container mx-auto px-6 relative z-10">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <!-- Profile Image -->
-        <div class="flex justify-center lg:justify-end">
-          <div
-            class="relative w-64 h-64 rounded-full overflow-hidden border-4 border-emerald-500 shadow-lg"
-          >
-            <img src="/profile.jpg" alt="Profile" class="w-full h-full object-cover" />
-          </div>
+    <div class="wrap hero__inner">
+      <!-- Content -->
+      <div class="hero__content">
+        <p class="eyebrow animate-in" style="animation-delay: 0.05s">
+          Cloud &amp; DevOps Architect
+        </p>
+        <h1 class="hero__title animate-in" style="animation-delay: 0.15s">
+          Hi, I'm <span class="text-gradient">Manideep&nbsp;Chittineni</span>
+        </h1>
+        <p class="hero__lede animate-in" style="animation-delay: 0.25s">
+          I specialize in enterprise-scale migrations and cloud infrastructure optimization —
+          transforming complex systems into efficient, scalable, secure, and cost-effective
+          solutions.
+        </p>
+
+        <div class="hero__actions animate-in" style="animation-delay: 0.35s">
+          <a href="#contact" class="btn btn-primary">Get in Touch</a>
+          <a href="/Manideep_Chittineni_Resume.pdf" download class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            Download Resume
+          </a>
         </div>
 
-        <!-- Content -->
-        <div class="text-2xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
-          <h1 class="heading-1 mb-6">
-            <span
-              class="bg-gradient-to-r from-emerald-600 to-emerald-400 bg-clip-text text-transparent"
-            >
-              Manideep Chittineni
-            </span>
-          </h1>
-          <h2 class="text-2xl font-semibold text-slate-700 dark:text-slate-300 mb-4">
-            Cloud & DevOps Architect
-          </h2>
-          <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl">
-            Specializing in enterprise-scale migrations and cloud infrastructure optimization.
-            Transforming complex systems into efficient, scalable, secure, cost-efficient, highly
-            reliable solutions.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-            <a href="#contact" class="btn-emerald"> Get in Touch </a>
-            <a
-              href="/Manideep_Chittineni_Resume.pdf"
-              download
-              class="inline-flex items-center px-4 py-2 border border-emerald-600 text-sm font-medium rounded-md text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-colors duration-200"
-            >
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                />
-              </svg>
-              Download Resume
-            </a>
+        <dl class="hero__stats animate-in" style="animation-delay: 0.45s">
+          <div v-for="stat in stats" :key="stat.label" class="hero__stat">
+            <dt class="hero__stat-value text-gradient">{{ stat.value }}</dt>
+            <dd class="hero__stat-label">{{ stat.label }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Profile -->
+      <div class="hero__visual animate-in" style="animation-delay: 0.3s">
+        <div class="hero__photo-ring">
+          <div class="hero__photo">
+            <img
+              src="/profile.jpg"
+              alt="Portrait of Manideep Chittineni"
+              width="320"
+              height="320"
+              loading="eager"
+            />
           </div>
         </div>
+        <span class="hero__badge">
+          <span class="hero__badge-dot"></span>
+          Available for opportunities
+        </span>
       </div>
     </div>
+
+    <a href="#skills" class="hero__scroll" aria-label="Scroll to skills">
+      <span class="hero__mouse"><span class="hero__wheel"></span></span>
+    </a>
   </section>
 </template>
 
+<script setup>
+  const stats = [
+    { value: '5+', label: 'Years Experience' },
+    { value: '6', label: 'Cloud Certifications' },
+    { value: '99.9%', label: 'System Uptime' },
+    { value: '45%', label: 'Avg. Cost Saved' },
+  ]
+</script>
+
 <style scoped>
-  .animate-blob {
-    animation: blob 7s infinite;
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-top: var(--nav-h);
   }
 
-  .animation-delay-2000 {
-    animation-delay: 2s;
+  .hero__orbs {
+    position: absolute;
+    inset: 0;
+  }
+  .hero__orb-1 {
+    top: -6rem;
+    right: -4rem;
+    width: 26rem;
+    height: 26rem;
+    background: rgba(129, 140, 248, 0.4);
+  }
+  .hero__orb-2 {
+    bottom: -8rem;
+    left: -6rem;
+    width: 24rem;
+    height: 24rem;
+    background: rgba(34, 211, 238, 0.32);
+    animation-delay: 5s;
   }
 
-  .animation-delay-4000 {
-    animation-delay: 4s;
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+    padding-block: 3rem;
   }
 
-  @keyframes blob {
+  .hero__title {
+    font-size: clamp(2.4rem, 1.4rem + 4.2vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0.6rem 0 0;
+  }
+  .hero__lede {
+    color: var(--text-soft);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    max-width: 34rem;
+    margin: 1.4rem 0 0;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .hero__actions svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .hero__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem 2rem;
+    margin: 3rem 0 0;
+    max-width: 30rem;
+  }
+  .hero__stat {
+    border-left: 2px solid var(--border-strong);
+    padding-left: 1rem;
+  }
+  .hero__stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .hero__stat-label {
+    margin: 0.35rem 0 0;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+
+  /* Visual */
+  .hero__visual {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-self: center;
+  }
+  .hero__photo-ring {
+    padding: 6px;
+    border-radius: 50%;
+    background: var(--accent-grad);
+    box-shadow: 0 30px 70px -30px rgba(129, 140, 248, 0.7);
+  }
+  .hero__photo {
+    width: clamp(15rem, 38vw, 20rem);
+    height: clamp(15rem, 38vw, 20rem);
+    border-radius: 50%;
+    overflow: hidden;
+    border: 6px solid var(--bg);
+    background: var(--bg-soft);
+  }
+  .hero__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: -1.25rem;
+    padding: 0.5rem 1rem;
+    background: rgba(10, 11, 18, 0.85);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    backdrop-filter: blur(8px);
+  }
+  .hero__badge-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25);
+  }
+
+  /* Scroll cue */
+  .hero__scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 1.75rem;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+  .hero__mouse {
+    display: block;
+    width: 1.5rem;
+    height: 2.5rem;
+    border: 2px solid var(--border-strong);
+    border-radius: 999px;
+    position: relative;
+  }
+  .hero__wheel {
+    position: absolute;
+    top: 0.45rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.3rem;
+    height: 0.5rem;
+    background: var(--accent);
+    border-radius: 999px;
+    animation: wheel 1.6s ease-in-out infinite;
+  }
+  @keyframes wheel {
     0% {
-      transform: translate(0px, 0px) scale(1);
+      opacity: 0;
+      transform: translate(-50%, 0);
     }
-    33% {
-      transform: translate(30px, -50px) scale(1.1);
-    }
-    66% {
-      transform: translate(-20px, 20px) scale(0.9);
+    40% {
+      opacity: 1;
     }
     100% {
-      transform: translate(0px, 0px) scale(1);
+      opacity: 0;
+      transform: translate(-50%, 0.7rem);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .hero__inner {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+    .hero__visual {
+      justify-self: end;
     }
   }
 </style>
